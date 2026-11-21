@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { SiteNavbar } from "@/components/side-navbar"
 
@@ -10,12 +10,9 @@ export default async function DashboardLayout({
   return (
     <>
       <SiteNavbar />
-      <SidebarProvider>
+      <SidebarProvider className="dashboard-layout">
         <DashboardSidebar />
-        <main className="min-w-0 flex-1">
-          <SidebarTrigger />
-          {children}
-        </main>
+        <main className="dashboard-main">{children}</main>
       </SidebarProvider>
     </>
   )

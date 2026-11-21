@@ -102,19 +102,26 @@ export function DashboardSidebar() {
         ? "Vendor Portal"
         : "Customer Portal"
   const items = menus[role] || menus.customer
+  const accountName = session?.user?.name || "WedPlan member"
+  const isPremium = session?.user?.subscriptionPlan === "Premium"
 
   return (
-    <Sidebar className="border-r border-[#e9e2dd] bg-[#fffefd] text-[#342d2b]">
-      <SidebarHeader>
-        <Link href="/" className="dashboard-brand">
-          <span className="brand-mark">
-            <HeartIcon />
-          </span>
-          <span>
-            <strong>WedPlan</strong>
-            <small>{title}</small>
-          </span>
-        </Link>
+    <Sidebar collapsible="none" className="dashboard-sidebar-card">
+      <SidebarHeader className="dashboard-workspace-header">
+        <span className="dashboard-workspace-label">WORKSPACE</span>
+        <div className="dashboard-workspace-title">
+          <div>
+            <strong>{title}</strong>
+            <small>{accountName}</small>
+          </div>
+          {role === "vendor" && (
+            <span
+              className={`dashboard-plan-badge ${isPremium ? "premium" : ""}`}
+            >
+              {isPremium ? "Premium" : "Free"}
+            </span>
+          )}
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -144,19 +151,5 @@ export function DashboardSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
-}
-
-function HeartIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      width="17"
-      height="17"
-      fill="currentColor"
-    >
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
-    </svg>
   )
 }
