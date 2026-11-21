@@ -83,6 +83,11 @@ const menus: Record<string, Item[]> = {
       url: "/dashboard/admin/transactions",
       icon: CreditCard,
     },
+    {
+      name: "Profile Settings",
+      url: "/dashboard/admin/settings",
+      icon: Settings,
+    },
   ],
 }
 

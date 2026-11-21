@@ -222,6 +222,91 @@ body {
   border: 1px solid #eee6e1;
   border-radius: 99px;
   padding: 5px 12px 5px 5px;
+  cursor: pointer;
+  list-style: none;
+}
+.account-chip::-webkit-details-marker {
+  display: none;
+}
+.account-menu {
+  position: relative;
+}
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: 50;
+  width: 246px;
+  overflow: hidden;
+  border: 1px solid #eee6e1;
+  border-radius: 14px;
+  background: #fffefd;
+  box-shadow: 0 14px 35px rgb(41 36 35 / 12%);
+  padding: 8px;
+}
+.account-menu-details {
+  display: grid;
+  gap: 5px;
+  border-bottom: 1px solid #eee6e1;
+  padding: 9px 10px 12px;
+}
+.account-menu-details strong {
+  overflow: hidden;
+  color: #322a28;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-menu-details small {
+  overflow: hidden;
+  color: #827a76;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-role-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.account-role-badges > span {
+  border-radius: 99px;
+  background: #f6eaea;
+  padding: 4px 8px;
+  color: #742033;
+  font-size: 10px;
+  font-weight: 600;
+}
+.account-role-badges > .premium-role-badge {
+  background: #fff6d9;
+  color: #806323;
+}
+.account-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  padding: 10px;
+  color: #514745;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.account-menu-link:hover,
+.account-menu-link:focus-visible {
+  background: #f8eeee;
+  color: #8e263b;
+  outline: none;
+}
+.account-menu-logout {
+  margin-top: 5px;
+  border-top: 1px solid #eee6e1;
+  border-radius: 0 0 8px 8px;
+  color: #8e263b;
 }
 .account-chip img,
 .account-placeholder {

@@ -2,7 +2,14 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Heart, Menu, UserRound } from "lucide-react"
+import {
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Settings,
+  UserRound,
+} from "lucide-react"
 import { useSession, signOut } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import {
@@ -55,6 +62,7 @@ export default function Navbar({
       : role === "vendor"
         ? "/dashboard/vendor"
         : "/dashboard/customer"
+  const settingsHref = `${dashboardHref}/settings`
   const links = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Browse Services" },
@@ -69,6 +77,7 @@ export default function Navbar({
 
   async function handleSignOut() {
     await signOut()
+    router.push("/")
     router.refresh()
   }
 
@@ -91,8 +100,8 @@ export default function Navbar({
         </nav>
         <div className="header-actions">
           {session?.user ? (
-            <>
-              <Link className="account-chip" href={dashboardHref}>
+            <details className="account-menu">
+              <summary className="account-chip">
                 {session.user.image ? (
                   <img src={session.user.image} alt="" />
                 ) : (
@@ -104,17 +113,45 @@ export default function Navbar({
                   <strong>{session.user.name || "Your account"}</strong>
                   <small>
                     {role === "vendor"
-                      ? `Vendor${session.user.subscriptionPlan === "Premium" ? " · Premium" : ""}`
+                      ? "Vendor"
                       : role === "admin"
                         ? "Administrator"
                         : "Customer"}
                   </small>
                 </span>
-              </Link>
-              <button className="signout-link" onClick={handleSignOut}>
-                Sign out
-              </button>
-            </>
+              </summary>
+              <div className="account-menu-panel">
+                <div className="account-menu-details">
+                  <strong>{session.user.name || "Your account"}</strong>
+                  {session.user.email && <small>{session.user.email}</small>}
+                  <span className="account-role-badges">
+                    <span>
+                      {role === "admin"
+                        ? "Admin"
+                        : role === "vendor"
+                          ? "Vendor"
+                          : "Customer"}
+                    </span>
+                    {role === "vendor" &&
+                      session.user.subscriptionPlan === "Premium" && (
+                        <span className="premium-role-badge">♛ Premium</span>
+                      )}
+                  </span>
+                </div>
+                <Link href={dashboardHref} className="account-menu-link">
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+                <Link href={settingsHref} className="account-menu-link">
+                  <Settings size={16} /> Profile Settings
+                </Link>
+                <button
+                  className="account-menu-link account-menu-logout"
+                  onClick={handleSignOut}
+                >
+                  <LogOut size={16} /> Sign out
+                </button>
+              </div>
+            </details>
           ) : (
             <>
               <Link href="/sign-in" className="sign-in-link">
