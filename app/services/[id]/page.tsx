@@ -1,9 +1,10 @@
 import Link from "next/link"
-import { ArrowLeft, BadgeCheck, MapPin, Sparkles } from "lucide-react"
+import { ArrowLeft, BadgeCheck, MapPin } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
 import { BookingForm } from "./booking-form"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
+import { ServiceGallery } from "./service-gallery"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -84,31 +85,11 @@ export default async function ServiceDetailsPage({
             </Link>
             <div className="detail-layout">
               <div className="detail-main">
-                <div className="detail-gallery">
-                  <div
-                    className="detail-cover"
-                    style={{
-                      backgroundImage: `url(${service.images?.[0] || ""})`,
-                    }}
-                  >
-                    <span className="category-pill">{service.category}</span>
-                    {service.vendor?.isPremium && (
-                      <span className="partner-pill">
-                        <Sparkles size={13} /> Premium Vendor
-                      </span>
-                    )}
-                  </div>
-                  {service.images?.length > 1 && (
-                    <div className="detail-thumbnails">
-                      {service.images.slice(1, 4).map((image, index) => (
-                        <div
-                          key={`${image}-${index}`}
-                          style={{ backgroundImage: `url(${image})` }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ServiceGallery
+                  images={service.images || []}
+                  category={service.category}
+                  premium={service.vendor?.isPremium}
+                />
                 <article className="detail-information">
                   <h1>{service.serviceName}</h1>
                   <p className="service-location">
