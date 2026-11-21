@@ -54,35 +54,30 @@ const categories = [
   },
 ]
 
-const featured = [
-  {
-    name: "Bespoke Garden Arch & Candlelit Tablescape Florals",
-    category: "Decoration & Florist",
-    location: "San Francisco, CA",
-    price: "3,400",
-    vendor: "Atelier Lumiere Weddings",
-    image: "photo-1519741497674-611481863552",
-    featured: true,
-  },
-  {
-    name: "Super 8mm Documentary Wedding Film",
-    category: "Photography & Videography",
-    location: "Santa Barbara, CA",
-    price: "3,100",
-    vendor: "Atelier Lumiere Weddings",
-    image: "photo-1537633552985-df8429e8048b",
-    featured: true,
-  },
-  {
-    name: "Haute Bridal Couture & Custom Gowns",
-    category: "Wedding Fashion",
-    location: "Beverly Hills, CA",
-    price: "2,900",
-    vendor: "Atelier Lumiere Weddings",
-    image: "photo-1594552072238-b8a33785b261",
-    featured: true,
-  },
-]
+type FeaturedService = {
+  _id: string
+  serviceName: string
+  category: string
+  location: string
+  price: number
+  images?: string[]
+  vendor?: { name?: string; businessName?: string; isPremium?: boolean }
+}
+
+async function getFeaturedServices(): Promise<FeaturedService[]> {
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
+  try {
+    const response = await fetch(`${apiBase}/services?sort=newest&limit=3`, {
+      cache: "no-store",
+    })
+    if (!response.ok) return []
+    const payload = await response.json()
+    return Array.isArray(payload.services) ? payload.services.slice(0, 3) : []
+  } catch {
+    return []
+  }
+}
 
 function imageUrl(id: string, width = 900) {
   return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`
@@ -106,36 +101,55 @@ function SectionHeading({
   )
 }
 
-function ServiceCard({ service }: { service: (typeof featured)[number] }) {
+function ServiceCard({ service }: { service: FeaturedService }) {
   return (
     <article className="service-card">
       <div
         className="service-image"
-        style={{ backgroundImage: `url(${imageUrl(service.image)})` }}
+        style={{
+          backgroundImage: service.images?.[0]
+            ? `url(${service.images[0]})`
+            : undefined,
+        }}
       >
         <span className="category-pill">{service.category}</span>
-        {service.featured && (
+        {service.vendor?.isPremium && (
           <span className="partner-pill">
             <Sparkles size={13} /> Featured Partner
           </span>
         )}
-        <span className="price-pill">${service.price}</span>
+        <span className="price-pill">${service.price.toLocaleString()}</span>
       </div>
       <div className="service-content">
-        <h3>{service.name}</h3>
+        <h3>{service.serviceName}</h3>
         <p className="service-location">
           <MapPin size={15} />
           {service.location}
         </p>
         <div className="vendor-line">
-          <span className="vendor-avatar">A</span>
+          <span className="vendor-avatar">
+            {(
+              service.vendor?.businessName ||
+              service.vendor?.name ||
+              "W"
+            ).slice(0, 1)}
+          </span>
           <div>
-            <strong>{service.vendor}</strong>
-            <small>Premium Vendor</small>
+            <strong>
+              {service.vendor?.businessName ||
+                service.vendor?.name ||
+                "Wedding vendor"}
+            </strong>
+            <small>
+              {service.vendor?.isPremium ? "Premium Vendor" : "Wedding Vendor"}
+            </small>
           </div>
           <BadgeCheck className="verified-icon" size={18} />
         </div>
-        <Link className="button button-primary card-link" href="/services">
+        <Link
+          className="button button-primary card-link"
+          href={`/services/${service._id}`}
+        >
           View Details <ArrowRight size={16} />
         </Link>
       </div>
@@ -143,7 +157,8 @@ function ServiceCard({ service }: { service: (typeof featured)[number] }) {
   )
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featured = await getFeaturedServices()
   return (
     <main>
       <SiteNavbar />
@@ -238,11 +253,18 @@ export default function HomePage() {
             View all services <ArrowRight size={16} />
           </Link>
         </div>
-        <div className="service-grid">
-          {featured.map((service) => (
-            <ServiceCard key={service.name} service={service} />
-          ))}
-        </div>
+        {featured.length ? (
+          <div className="service-grid">
+            {featured.map((service) => (
+              <ServiceCard key={service._id} service={service} />
+            ))}
+          </div>
+        ) : (
+          <p className="empty-state">
+            New wedding services are coming soon. Browse all services to explore
+            the marketplace.
+          </p>
+        )}
       </section>
 
       <section className="category-section">
