@@ -1,9 +1,6 @@
-import { SiteNavbar } from "@/components/side-navbar"
-
 export default function ServiceDetailsLoading() {
   return (
     <>
-      <SiteNavbar />
       <main className="service-detail-page" aria-busy="true">
         <div className="content-wrap detail-layout">
           <div className="detail-main">

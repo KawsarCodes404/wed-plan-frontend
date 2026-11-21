@@ -9,7 +9,6 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react"
-import { SiteNavbar } from "@/components/side-navbar"
 
 const categories = [
   "Photography & Videography",
@@ -179,7 +178,6 @@ export default function ServicesPage() {
 
   return (
     <>
-      <SiteNavbar />
       <main className="services-page">
         <div className="content-wrap">
           <div className="services-intro">

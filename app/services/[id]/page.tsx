@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { ArrowLeft, BadgeCheck, MapPin } from "lucide-react"
-import { SiteNavbar } from "@/components/side-navbar"
 import { BookingForm } from "./booking-form"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
@@ -76,7 +75,6 @@ export default async function ServiceDetailsPage({
 
   return (
     <>
-      <SiteNavbar />
       <main className="service-detail-page">
         <div className="content-wrap">
           <>
