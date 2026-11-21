@@ -1,11 +1,36 @@
-# WedPlan
+# WedPlan — Wedding Planning Platform
 
-WedPlan is a wedding-services marketplace built with Next.js, Better Auth, and a separate Express API. The public experience lets couples find reviewed vendors and send booking requests. Vendors manage listings and inquiries; admins review accounts and services.
+WedPlan is a marketplace where couples can find wedding vendors and request bookings. Vendors manage services and booking requests, and admins review marketplace activity.
 
-## Local development
+## Links
 
-1. Copy `.env.example` to `.env.local` and fill in the Better Auth, MongoDB, API, Google, and image-upload values you use locally.
-2. Start the API from `wed-plan-backend` (`npm run dev`) and point `NEXT_PUBLIC_API_BASE_URL` at it.
-3. Install frontend dependencies with `npm install`, then run `npm run dev`.
+- Live site: [https://wedplan.nazmussakib.dev](https://wedplan.nazmussakib.dev)
+- Frontend repository: [wed-plan-frontend](https://github.com/KawsarCodes404/wed-plan-frontend)
+- Backend repository: [wed-plan-backend](https://github.com/KawsarCodes404/wed-plan-backend)
 
-The frontend and API use the `wed-plan` MongoDB database. Better Auth owns the `user` and `session` collections; the API owns `services`, `bookings`, and `transactions`. Real `.env` files are ignored and should never be committed.
+## Features
+
+- Search and filter approved wedding services by name, category, location, and price.
+- Customer, vendor, and admin sign in with email or Google.
+- Customer booking requests and booking status tracking.
+- Vendor service management, approval status, and booking request management.
+- Free vendor plan with up to three active services; Premium adds unlimited services and a vendor badge.
+- Stripe Checkout subscriptions, verified through backend webhooks.
+- Admin tools for users, service review, and read-only payment transactions.
+- Responsive pages, loading placeholders, form feedback, and motion that respects reduced-motion settings.
+
+## Technology
+
+Next.js 16, React, TypeScript, Better Auth, ShadCN components, Express, MongoDB, Stripe Checkout, ImgBB, and Framer Motion.
+
+## Run locally
+
+1. Copy `.env.example` to `.env.local` and fill in your Better Auth, MongoDB, Google OAuth, API URL, and ImgBB values.
+2. In the backend repository, copy its `.env.example` to `.env` and add MongoDB and Stripe settings. Follow its README for Stripe webhook setup.
+3. Install and start the API with `npm install` and `npm run dev` in `wed-plan-backend`.
+4. Install and start the website with `npm install` and `npm run dev` in `wed-plan-frontend`.
+5. Open [http://localhost:3000](http://localhost:3000).
+
+Better Auth and the API should use the same MongoDB database and `BETTER_AUTH_URL`. The API verifies short-lived Better Auth JWTs against its JWKS endpoint and reads the user’s current role and blocked status from MongoDB.
+
+Use placeholders in `.env.example`. Never commit `.env`, `.env.local`, or secret credentials.
