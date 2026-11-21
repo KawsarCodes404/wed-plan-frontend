@@ -2573,3 +2573,50 @@ body {
   background: #8e263b;
   color: white;
 }
+.unauthorized-page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 74px);
+  padding: 30px 18px 55px;
+}
+.unauthorized-card {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  max-width: 470px;
+  border: 1px solid #ebe4df;
+  border-radius: 14px;
+  background: #fffefd;
+  padding: 34px;
+  text-align: center;
+  box-shadow: 0 8px 28px #3828210a;
+}
+.unauthorized-card > span {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f4e8e8;
+  color: #8e263b;
+}
+.unauthorized-card h1 {
+  margin: 0;
+  color: #302927;
+  font:
+    500 28px Georgia,
+    serif;
+}
+.unauthorized-card p {
+  margin: 0;
+  color: #79716e;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.unauthorized-card > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 5px;
+}
