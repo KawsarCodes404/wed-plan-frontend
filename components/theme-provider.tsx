@@ -39,6 +39,10 @@ function ThemeHotkey() {
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (!event || typeof event !== "object") {
+        return
+      }
+
       if (event.defaultPrevented || event.repeat) {
         return
       }
