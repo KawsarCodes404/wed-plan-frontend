@@ -34,10 +34,9 @@ export function PillRadioGroup({
               type="radio"
               name={name}
               value={option.value}
-              checked={value === undefined ? undefined : value === option.value}
-              defaultChecked={
-                value === undefined && option.value === defaultValue
-              }
+              {...(value === undefined
+                ? { defaultChecked: option.value === defaultValue }
+                : { checked: value === option.value })}
               onChange={() => onValueChange?.(option.value)}
               className="accent-[#8e263b]"
             />
