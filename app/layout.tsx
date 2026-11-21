@@ -9,6 +9,20 @@ export const metadata: Metadata = {
   title: "WedPlan | Wedding services, thoughtfully found",
   description:
     "Find trusted wedding photographers, venues, florists, caterers, and stylists in one place.",
+  applicationName: "WedPlan",
+  openGraph: {
+    title: "WedPlan | Wedding services, thoughtfully found",
+    description:
+      "Discover admin-vetted wedding professionals and keep every booking request together.",
+    siteName: "WedPlan",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WedPlan | Wedding services, thoughtfully found",
+    description:
+      "Discover trusted wedding photographers, venues, florists, caterers, and stylists.",
+  },
 }
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
