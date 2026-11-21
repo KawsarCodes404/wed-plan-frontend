@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useRef } from "react"
 import {
   Heart,
   LayoutDashboard,
@@ -54,6 +55,7 @@ export default function Navbar({
 }) {
   const pathname = usePathname()
   const router = useRouter()
+  const accountMenuRef = useRef<HTMLDetailsElement>(null)
   const { data, isPending } = useSession()
   const session = isPending ? initialSession : data
   const role = session?.user?.role
@@ -64,6 +66,32 @@ export default function Navbar({
         ? "/dashboard/vendor"
         : "/dashboard/customer"
   const settingsHref = `${dashboardHref}/settings`
+  useEffect(() => {
+    function closeAccountMenu(event: MouseEvent) {
+      const menu = accountMenuRef.current
+      if (
+        menu &&
+        event.target instanceof Node &&
+        !menu.contains(event.target)
+      ) {
+        menu.open = false
+      }
+    }
+
+    function closeAccountMenuOnEscape(event: KeyboardEvent) {
+      const menu = accountMenuRef.current
+      if (event.key === "Escape" && menu?.open) menu.open = false
+    }
+
+    document.addEventListener("click", closeAccountMenu)
+    document.addEventListener("keydown", closeAccountMenuOnEscape)
+
+    return () => {
+      document.removeEventListener("click", closeAccountMenu)
+      document.removeEventListener("keydown", closeAccountMenuOnEscape)
+    }
+  }, [])
+
   const links = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Browse Services" },
@@ -102,7 +130,7 @@ export default function Navbar({
         </nav>
         <div className="header-actions">
           {session?.user ? (
-            <details className="account-menu">
+            <details className="account-menu" ref={accountMenuRef}>
               <summary className="account-chip">
                 {session.user.image ? (
                   <img src={session.user.image} alt="" />
