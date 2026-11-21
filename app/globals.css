@@ -2164,19 +2164,23 @@ body {
   cursor: wait;
   opacity: 0.65;
 }
+.availability-switch:focus-visible {
+  outline: 3px solid #8e263b40;
+  outline-offset: 2px;
+}
 .availability-switch-track {
   display: flex;
   align-items: center;
-  width: 34px;
-  height: 20px;
+  width: 44px;
+  height: 24px;
   border-radius: 99px;
   background: #c9c2be;
   padding: 2px;
   transition: background 160ms ease;
 }
 .availability-switch-track > span {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: white;
   box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
@@ -2186,7 +2190,7 @@ body {
   background: #98263d;
 }
 .availability-switch.is-active .availability-switch-track > span {
-  transform: translateX(14px);
+  transform: translateX(20px);
 }
 .icon-action {
   display: grid;
