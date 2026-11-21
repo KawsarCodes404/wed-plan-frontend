@@ -38,7 +38,7 @@ type Service = {
     isPremium?: boolean
   }
 }
-type Result = { services: Service[]; total: number }
+type Result = { services: Service[]; total: number; pages: number; page: number }
 
 function ServiceTile({ service }: { service: Service }) {
   return (
@@ -115,9 +115,11 @@ export default function ServicesPage() {
     category: "",
     location: "",
     sort: "newest",
+    page: 1,
   })
   const [services, setServices] = useState<Service[]>([])
   const [total, setTotal] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -129,15 +131,19 @@ export default function ServicesPage() {
     if (filters.category) query.set("category", filters.category)
     if (filters.location.trim()) query.set("location", filters.location.trim())
     query.set("sort", filters.sort)
+    query.set("page", String(filters.page))
+    query.set("limit", "9")
     try {
       const response = await fetch(`${apiBase}/services?${query.toString()}`)
       if (!response.ok) throw new Error("We couldn't load services right now.")
       const result = (await response.json()) as Result
       setServices(result.services || [])
       setTotal(result.total || 0)
+      setPageCount(Math.max(1, result.pages || 1))
     } catch (reason) {
       setServices([])
       setTotal(0)
+      setPageCount(1)
       setError(
         reason instanceof Error
           ? reason.message
@@ -159,6 +165,7 @@ export default function ServicesPage() {
       category: params.get("category") || "",
       location: params.get("location") || "",
       sort: params.get("sort") || "newest",
+      page: 1,
     })
   }, [])
   useEffect(() => {
@@ -184,7 +191,7 @@ export default function ServicesPage() {
             className="service-filters"
             onSubmit={(event) => {
               event.preventDefault()
-              setFilters({ search, category, location, sort })
+              setFilters({ search, category, location, sort, page: 1 })
             }}
           >
             <label className="filter-search">
@@ -245,7 +252,9 @@ export default function ServicesPage() {
               <p>{error}</p>
               <button
                 className="button button-primary"
-                onClick={() => setFilters({ search, category, location, sort })}
+                onClick={() =>
+                  setFilters({ ...filters, search, category, location, sort })
+                }
               >
                 Try again
               </button>
@@ -262,6 +271,25 @@ export default function ServicesPage() {
                 <ServiceTile key={service._id} service={service} />
               ))}
             </div>
+            {pageCount > 1 && (
+              <nav className="service-pagination" aria-label="Service pages">
+                <button
+                  className="button button-outline"
+                  disabled={filters.page <= 1}
+                  onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
+                >
+                  Previous
+                </button>
+                <span>Page {filters.page} of {pageCount}</span>
+                <button
+                  className="button button-outline"
+                  disabled={filters.page >= pageCount}
+                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
+                >
+                  Next
+                </button>
+              </nav>
+            )}
           ) : (
             <div className="services-empty">
               <span className="empty-heart">
@@ -284,6 +312,7 @@ export default function ServicesPage() {
                     category: "",
                     location: "",
                     sort: "newest",
+                    page: 1,
                   })
                 }}
               >

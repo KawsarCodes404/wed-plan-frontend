@@ -989,6 +989,25 @@ body {
   background-size: 200% 100%;
   animation: service-loading 1.3s linear infinite;
 }
+.service-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 25px;
+}
+.service-pagination > span {
+  color: #79716e;
+  font-size: 12px;
+}
+.service-pagination button {
+  min-height: 38px;
+  font-size: 11px;
+}
+.service-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
 @keyframes service-loading {
   to {
     background-position: -200% 0;
