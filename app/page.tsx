@@ -14,6 +14,7 @@ import {
   Building2,
 } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
+import { AnimatedSection } from "@/components/animated-section"
 
 const categories = [
   {
@@ -68,12 +69,12 @@ async function getFeaturedServices(): Promise<FeaturedService[]> {
   const apiBase =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
   try {
-    const response = await fetch(`${apiBase}/services?sort=newest&limit=3`, {
+    const response = await fetch(`${apiBase}/services?sort=newest&limit=6`, {
       cache: "no-store",
     })
     if (!response.ok) return []
     const payload = await response.json()
-    return Array.isArray(payload.services) ? payload.services.slice(0, 3) : []
+    return Array.isArray(payload.services) ? payload.services.slice(0, 6) : []
   } catch {
     return []
   }
@@ -242,11 +243,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="featured-section content-wrap">
+      <AnimatedSection className="featured-section content-wrap">
         <div className="section-row">
           <SectionHeading
             eyebrow="A GOOD PLACE TO START"
-            title="A few lovely finds"
+            title="Featured wedding services"
             description="Meet some of the talented people making celebrations unforgettable."
           />
           <Link href="/services" className="text-link">
@@ -265,9 +266,9 @@ export default async function HomePage() {
             the marketplace.
           </p>
         )}
-      </section>
+      </AnimatedSection>
 
-      <section className="category-section">
+      <AnimatedSection className="category-section">
         <div className="content-wrap">
           <SectionHeading
             eyebrow="EXPLORE BY SPECIALTY"
@@ -296,9 +297,9 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section className="promise-section content-wrap">
+      <AnimatedSection className="promise-section content-wrap">
         <div className="promise-copy">
           <span className="eyebrow">THE WEDPLAN PROMISE</span>
           <h2>
@@ -361,9 +362,9 @@ export default async function HomePage() {
             <Heart size={16} fill="currentColor" /> here's to the good stuff
           </span>
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section className="testimonial-section">
+      <AnimatedSection className="testimonial-section">
         <div className="content-wrap">
           <SectionHeading
             eyebrow="LOVE NOTES"
@@ -405,9 +406,9 @@ export default async function HomePage() {
             </blockquote>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section className="closing-cta">
+      <AnimatedSection className="closing-cta">
         <div className="closing-inner">
           <span className="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
           <h2>
@@ -421,7 +422,7 @@ export default async function HomePage() {
             <Heart size={32} strokeWidth={1} />
           </span>
         </div>
-      </section>
+      </AnimatedSection>
       <footer className="site-footer">
         <div className="content-wrap footer-main">
           <Link href="/" className="brand-lockup">
