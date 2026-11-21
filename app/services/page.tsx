@@ -38,7 +38,12 @@ type Service = {
     isPremium?: boolean
   }
 }
-type Result = { services: Service[]; total: number; pages: number; page: number }
+type Result = {
+  services: Service[]
+  total: number
+  pages: number
+  page: number
+}
 
 function ServiceTile({ service }: { service: Service }) {
   return (
@@ -266,30 +271,38 @@ export default function ServicesPage() {
               ))}
             </div>
           ) : services.length ? (
-            <div className="service-grid">
-              {services.map((service) => (
-                <ServiceTile key={service._id} service={service} />
-              ))}
-            </div>
-            {pageCount > 1 && (
-              <nav className="service-pagination" aria-label="Service pages">
-                <button
-                  className="button button-outline"
-                  disabled={filters.page <= 1}
-                  onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
-                >
-                  Previous
-                </button>
-                <span>Page {filters.page} of {pageCount}</span>
-                <button
-                  className="button button-outline"
-                  disabled={filters.page >= pageCount}
-                  onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
-                >
-                  Next
-                </button>
-              </nav>
-            )}
+            <>
+              <div className="service-grid">
+                {services.map((service) => (
+                  <ServiceTile key={service._id} service={service} />
+                ))}
+              </div>
+              {pageCount > 1 && (
+                <nav className="service-pagination" aria-label="Service pages">
+                  <button
+                    className="button button-outline"
+                    disabled={filters.page <= 1}
+                    onClick={() =>
+                      setFilters({ ...filters, page: filters.page - 1 })
+                    }
+                  >
+                    Previous
+                  </button>
+                  <span>
+                    Page {filters.page} of {pageCount}
+                  </span>
+                  <button
+                    className="button button-outline"
+                    disabled={filters.page >= pageCount}
+                    onClick={() =>
+                      setFilters({ ...filters, page: filters.page + 1 })
+                    }
+                  >
+                    Next
+                  </button>
+                </nav>
+              )}
+            </>
           ) : (
             <div className="services-empty">
               <span className="empty-heart">
