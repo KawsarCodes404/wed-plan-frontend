@@ -6,6 +6,8 @@ import { ArrowRight, ImagePlus, Pencil, Trash2 } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
+import { toast } from "@/components/ui/toast"
+import { useRouter } from "next/navigation"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -86,6 +88,11 @@ export function VendorServicesManager() {
           ? "Service removed."
           : `Service ${service.isActive ? "paused" : "activated"}.`
       )
+      toast.add({
+        title:
+          action === "delete" ? "Service removed." : "Availability updated.",
+        type: "success",
+      })
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to update service.")
@@ -190,6 +197,7 @@ export function VendorServicesManager() {
 }
 
 export function VendorServiceForm({ service }: { service?: Service }) {
+  const router = useRouter()
   const { data: session } = useSession()
   const [name, setName] = useState(service?.serviceName || "")
   const [category, setCategory] = useState(service?.category || categories[0])
@@ -200,7 +208,6 @@ export function VendorServiceForm({ service }: { service?: Service }) {
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
-  const [complete, setComplete] = useState(false)
   async function selectImages(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || [])
     if (!files.length) return
@@ -251,7 +258,11 @@ export function VendorServiceForm({ service }: { service?: Service }) {
       const result = await response.json()
       if (!response.ok)
         throw new Error(result.message || "Service could not be submitted.")
-      setComplete(true)
+      toast.add({
+        title: result.message || "Service submitted for review.",
+        type: "success",
+      })
+      router.push("/dashboard/vendor/services")
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "Service could not be submitted."
@@ -260,27 +271,6 @@ export function VendorServiceForm({ service }: { service?: Service }) {
       setSaving(false)
     }
   }
-  if (complete)
-    return (
-      <div className="dashboard-success">
-        <span>✓</span>
-        <h2>
-          {service
-            ? "Changes submitted for review"
-            : "Service submitted for review"}
-        </h2>
-        <p>
-          Your listing is pending admin approval. We’ll let you know when it’s
-          ready for couples to see.
-        </p>
-        <Link
-          className="button button-primary"
-          href="/dashboard/vendor/services"
-        >
-          View my services <ArrowRight size={15} />
-        </Link>
-      </div>
-    )
   return (
     <form className="vendor-service-form" onSubmit={submit}>
       <div className="vendor-form-grid">

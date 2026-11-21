@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toast"
+import { RouteToast } from "@/components/route-toast"
 import { cn } from "@/lib/utils"
 import type { Metadata } from "next"
 
@@ -49,7 +51,12 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <Toaster>
+            <RouteToast />
+            {children}
+          </Toaster>
+        </ThemeProvider>
       </body>
     </html>
   )

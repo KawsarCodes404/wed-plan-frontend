@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { CalendarDays, MapPin } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
+import { toast } from "@/components/ui/toast"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -69,6 +70,10 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
       const result = await response.json()
       if (!response.ok)
         throw new Error(result.message || "Unable to update this request.")
+      toast.add({
+        title: result.message || "Booking request updated.",
+        type: "success",
+      })
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to update the request.")

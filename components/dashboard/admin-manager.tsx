@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { BadgeCheck, MapPin, Shield, UserRound } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
+import { toast } from "@/components/ui/toast"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -102,6 +103,10 @@ export function AdminManager({
       const result = await response.json()
       if (!response.ok)
         throw new Error(result.message || "Could not save the change.")
+      toast.add({
+        title: result.message || "Change saved.",
+        type: "success",
+      })
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save the change.")

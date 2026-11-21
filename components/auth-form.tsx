@@ -13,6 +13,7 @@ import { CheckboxRow, controlClasses, FormField } from "@/components/ui/field"
 import { PillRadioGroup } from "@/components/ui/pill-radio-group"
 import { authClient } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
+import { addWelcomeQuery, dashboardPath } from "@/lib/auth-redirect"
 
 export type AuthMode = "sign-in" | "sign-up"
 
@@ -172,15 +173,9 @@ export function AuthForm({
         const role = isSignUp
           ? String(formData.get("role") ?? "customer")
           : (result.data as { user?: { role?: string } } | null)?.user?.role
-        const roleHome =
-          role === "admin"
-            ? "/dashboard/admin"
-            : role === "vendor"
-              ? "/dashboard/vendor"
-              : "/dashboard/customer"
-        router.push(
-          isSignUp ? roleHome : redirectTo === "/" ? roleHome : redirectTo
-        )
+        const destination =
+          redirectTo === "/" ? dashboardPath(role) : redirectTo
+        router.push(isSignUp ? addWelcomeQuery(destination) : destination)
       }
     } catch {
       setSubmitError(
@@ -197,7 +192,13 @@ export function AuthForm({
     try {
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: isSignUp ? "/" : redirectTo,
+        callbackURL: isSignUp
+          ? addWelcomeQuery(
+              redirectTo === "/" ? dashboardPath(selectedRole) : redirectTo
+            )
+          : redirectTo === "/"
+            ? "/auth/continue"
+            : redirectTo,
         additionalData: isSignUp ? { role: selectedRole } : undefined,
       })
       if (result.error)
@@ -451,7 +452,11 @@ export function AuthForm({
         <p className="text-center text-sm text-white/60">
           {copy.switchText}{" "}
           <Link
-            href={copy.switchLink.href}
+            href={
+              !isSignUp && redirectTo !== "/"
+                ? `${copy.switchLink.href}?callbackURL=${encodeURIComponent(redirectTo)}`
+                : copy.switchLink.href
+            }
             className="text-[#958eff] transition-colors outline-none hover:text-[#b1a8ff] focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {copy.switchLink.label}

@@ -25,7 +25,7 @@ Next.js 16, React, TypeScript, Better Auth, ShadCN components, Express, MongoDB,
 
 ## Run locally
 
-1. Copy `.env.example` to `.env.local` and fill in your Better Auth, MongoDB, Google OAuth, API URL, and ImgBB values.
+1. Copy `.env.example` to `.env.local` and fill in your Better Auth, MongoDB, Google OAuth, and API URL values.
 2. In the backend repository, copy its `.env.example` to `.env` and add MongoDB and Stripe settings. Follow its README for Stripe webhook setup.
 3. Install and start the API with `npm install` and `npm run dev` in `wed-plan-backend`.
 4. Install and start the website with `npm install` and `npm run dev` in `wed-plan-frontend`.
@@ -34,3 +34,4 @@ Next.js 16, React, TypeScript, Better Auth, ShadCN components, Express, MongoDB,
 Better Auth and the API should use the same MongoDB database and `BETTER_AUTH_URL`. The API verifies short-lived Better Auth JWTs against its JWKS endpoint and reads the user’s current role and blocked status from MongoDB.
 
 Use placeholders in `.env.example`. Never commit `.env`, `.env.local`, or secret credentials.
+Set `IMGBB_API_KEY` in the backend `.env`; image uploads go through the API so the key is not sent to browsers.

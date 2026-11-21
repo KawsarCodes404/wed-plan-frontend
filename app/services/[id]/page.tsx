@@ -4,6 +4,8 @@ import { BookingForm } from "./booking-form"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { ServiceGallery } from "./service-gallery"
+import { getSession } from "@/lib/core/server"
+import { redirect } from "next/navigation"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -70,6 +72,12 @@ export default async function ServiceDetailsPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const session = await getSession()
+  if (!session) {
+    redirect(`/sign-in?callbackURL=${encodeURIComponent(`/services/${id}`)}`)
+  }
+  if (session.user.isBlocked) redirect("/unauthorized")
+
   const service = await getService(id)
   if (!service) notFound()
 

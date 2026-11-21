@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
+import { toast } from "@/components/ui/toast"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -69,6 +70,10 @@ export function ProfileSettings() {
       if (!response.ok)
         throw new Error(result.message || "Profile could not be saved.")
       setMessage("Your profile is up to date.")
+      toast.add({
+        title: result.message || "Profile saved.",
+        type: "success",
+      })
     } catch (e) {
       setError(e instanceof Error ? e.message : "Profile could not be saved.")
     } finally {

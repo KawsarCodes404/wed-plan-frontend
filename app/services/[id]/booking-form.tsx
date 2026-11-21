@@ -5,6 +5,7 @@ import { useState } from "react"
 import { getApiToken } from "@/lib/api-token"
 import { Check, CircleCheck, MapPin } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
+import { toast } from "@/components/ui/toast"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -41,6 +42,10 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
       if (!response.ok)
         throw new Error(result.message || "We couldn't send your request.")
       setSubmitted(true)
+      toast.add({
+        title: result.message || "Booking request sent.",
+        type: "success",
+      })
     } catch (reason) {
       setError(
         reason instanceof Error

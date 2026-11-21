@@ -11,6 +11,7 @@ import {
   UserRound,
 } from "lucide-react"
 import { useSession, signOut } from "@/lib/auth-client"
+import { toast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -77,6 +78,7 @@ export default function Navbar({
 
   async function handleSignOut() {
     await signOut()
+    toast.add({ title: "Signed out successfully.", type: "success" })
     router.push("/")
     router.refresh()
   }

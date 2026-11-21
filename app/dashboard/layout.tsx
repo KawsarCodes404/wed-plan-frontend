@@ -1,5 +1,4 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Toaster } from "@/components/ui/toast"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { SiteNavbar } from "@/components/side-navbar"
 
@@ -17,7 +16,6 @@ export default async function DashboardLayout({
           <SidebarTrigger />
           {children}
         </main>
-        <Toaster />
       </SidebarProvider>
     </>
   )
