@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, CircleX, Crown } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
 
 export const metadata: Metadata = { title: "Checkout canceled — WedPlan" }
@@ -10,14 +10,23 @@ export default function CheckoutCancelPage() {
       <SiteNavbar />
       <main className="checkout-result-page">
         <section className="checkout-result-card">
+          <span className="checkout-result-icon is-cancelled">
+            <CircleX size={31} />
+          </span>
           <span className="eyebrow">WEDPLAN PREMIUM</span>
-          <h1>No worries, you can come back to it.</h1>
-          <p>Your checkout was canceled, and your current plan is unchanged.</p>
+          <h1>Checkout canceled</h1>
+          <p>
+            Your current plan is unchanged. You can return to your plans and try
+            Premium checkout again whenever you’re ready.
+          </p>
           <Link
             className="button button-primary"
             href="/dashboard/vendor/subscription"
           >
-            <ArrowLeft size={15} /> Return to plans
+            <Crown size={15} /> Return to plans
+          </Link>
+          <Link className="checkout-cancel-back" href="/dashboard/vendor">
+            <ArrowLeft size={14} /> Back to vendor dashboard
           </Link>
         </section>
       </main>

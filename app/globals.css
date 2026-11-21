@@ -2292,6 +2292,129 @@ body {
   gap: 16px;
   max-width: 850px;
 }
+.subscription-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+  border: 1px solid #ebe4df;
+  border-radius: 11px;
+  background: #fffefd;
+  padding: 17px 20px;
+}
+.subscription-status-card > div > .eyebrow {
+  color: #827a76;
+  font-size: 10px;
+}
+.subscription-status-line,
+.plan-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.subscription-status-line h2 {
+  margin: 5px 0 0;
+  font:
+    600 22px Georgia,
+    serif;
+}
+.service-count-badge,
+.recommended-badge {
+  border-radius: 99px;
+  background: #f7e9e9;
+  padding: 6px 10px;
+  color: #8e263b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.subscription-plan-cards {
+  max-width: none;
+}
+.plan-card-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.plan-card-heading h2 svg {
+  color: #a88943;
+}
+.recommended-badge {
+  background: #f7f0d8;
+  color: #846b31;
+}
+.subscription-history {
+  margin-top: 20px;
+}
+.subscription-history-scroll {
+  overflow-x: auto;
+}
+.subscription-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+.subscription-history-table th {
+  color: #827a76;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.subscription-history-table th,
+.subscription-history-table td {
+  border-bottom: 1px solid #eee8e3;
+  padding: 12px 8px;
+  white-space: nowrap;
+}
+.transaction-status {
+  display: inline-flex;
+  border-radius: 99px;
+  background: #f3efed;
+  padding: 5px 9px;
+  color: #625a56;
+  font-size: 10px;
+  font-weight: 600;
+}
+.status-completed {
+  background: #e2f4eb;
+  color: #34785d;
+}
+.status-cancelled,
+.status-failed {
+  background: #fae8e7;
+  color: #a33333;
+}
+.status-pending {
+  background: #fff4d6;
+  color: #8a6b1c;
+}
+.subscription-help {
+  color: #827a76;
+  font-size: 12px;
+}
+.subscription-help a {
+  color: #8e263b;
+  text-decoration: underline;
+}
+@media (max-width: 700px) {
+  .subscription-status-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .subscription-status-card > .button {
+    justify-content: center;
+  }
+  .subscription-status-line {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .plan-card-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
 .plan-card {
   display: grid;
   align-content: start;
@@ -2522,6 +2645,10 @@ body {
   background: #e2f4eb;
   color: #34785d;
 }
+.checkout-result-icon.is-cancelled {
+  background: #fae8e7;
+  color: #a33333;
+}
 .checkout-result-card h1 {
   margin: 0;
   color: #302927;
@@ -2535,6 +2662,67 @@ body {
   color: #79716e;
   font-size: 13px;
   line-height: 1.65;
+}
+.checkout-transaction-details {
+  display: grid;
+  gap: 9px;
+  width: 100%;
+  margin: 0;
+  border: 1px solid #ebe4df;
+  border-radius: 10px;
+  background: #fffefd;
+  padding: 14px;
+  text-align: left;
+  font-size: 12px;
+}
+.checkout-transaction-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.checkout-transaction-details dt {
+  color: #827a76;
+}
+.checkout-transaction-details dd {
+  margin: 0;
+  color: #342d2b;
+  font-weight: 600;
+  text-align: right;
+}
+.checkout-plan-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #846b31;
+}
+.checkout-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+}
+.checkout-result-actions .button {
+  flex: 1;
+  justify-content: center;
+}
+.checkout-cancel-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #756b67;
+  font-size: 12px;
+}
+@media (max-width: 520px) {
+  .checkout-result-card {
+    padding: 28px 18px;
+  }
+  .checkout-result-card h1 {
+    font-size: 25px;
+  }
+  .checkout-transaction-details {
+    padding: 12px;
+  }
 }
 .spin-icon {
   animation: service-loading 1.3s linear infinite;
