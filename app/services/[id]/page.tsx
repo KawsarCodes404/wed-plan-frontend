@@ -3,6 +3,7 @@ import { ArrowLeft, BadgeCheck, MapPin, Sparkles } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
 import { BookingForm } from "./booking-form"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -37,6 +38,29 @@ async function getService(id: string): Promise<Service | null> {
     return (await response.json()) as Service
   } catch {
     return null
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const service = await getService(id)
+  if (!service) return { title: "Service not found | WedPlan" }
+  return {
+    title: `${service.serviceName} | WedPlan`,
+    description:
+      `${service.category} in ${service.location}. ${service.description}`.slice(
+        0,
+        160
+      ),
+    openGraph: {
+      title: `${service.serviceName} | WedPlan`,
+      description: `${service.category} in ${service.location}`,
+      images: service.images?.[0] ? [service.images[0]] : undefined,
+    },
   }
 }
 
