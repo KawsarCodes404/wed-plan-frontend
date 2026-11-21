@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import { ArrowRight, ImagePlus, Pencil, Trash2 } from "lucide-react"
+import { ArrowRight, ImagePlus, MapPin, Pencil, Trash2 } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
@@ -147,32 +147,47 @@ export function VendorServicesManager() {
         <div className="managed-service-list">
           {rows.map((service) => (
             <article className="managed-service-row" key={service._id}>
-              <div className="managed-service-symbol">
-                <ImagePlus size={18} />
-              </div>
+              {service.images?.[0] ? (
+                <img
+                  className="managed-service-image"
+                  src={service.images[0]}
+                  alt=""
+                />
+              ) : (
+                <div className="managed-service-symbol">
+                  <ImagePlus size={18} />
+                </div>
+              )}
               <div className="managed-service-info">
-                <strong>{service.serviceName}</strong>
+                <div className="managed-service-title">
+                  <strong>{service.serviceName}</strong>
+                  <span
+                    className={`status-chip status-${service.status.toLowerCase()}`}
+                  >
+                    {service.status}
+                  </span>
+                </div>
                 <span>
                   {service.category} · ${Number(service.price).toLocaleString()}
                 </span>
-                <small>{service.location}</small>
+                <small>
+                  <MapPin size={13} /> {service.location}
+                </small>
               </div>
-              <span
-                className={`status-chip status-${service.status.toLowerCase()}`}
+              <button
+                className={`availability-switch ${service.isActive ? "is-active" : ""}`}
+                type="button"
+                role="switch"
+                aria-checked={service.isActive}
+                aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.serviceName}`}
+                disabled={busy === service._id}
+                onClick={() => void update(service, "availability")}
               >
-                {service.status}
-              </span>
-              <label className="availability-control">
-                <input
-                  type="checkbox"
-                  checked={service.isActive}
-                  disabled={
-                    busy === service._id || service.status !== "Approved"
-                  }
-                  onChange={() => void update(service, "availability")}
-                />
-                <span>{service.isActive ? "Active" : "Paused"}</span>
-              </label>
+                <span>{service.isActive ? "Active" : "Inactive"}</span>
+                <span className="availability-switch-track" aria-hidden="true">
+                  <span />
+                </span>
+              </button>
               <Link
                 className="icon-action"
                 aria-label={`Edit ${service.serviceName}`}

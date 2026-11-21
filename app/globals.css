@@ -2000,6 +2000,10 @@ body {
   background: #fff2d2;
   color: #946d1e;
 }
+.status-approved {
+  background: #e2f4eb;
+  color: #34785d;
+}
 .status-accepted {
   background: #e2f4eb;
   color: #34785d;
@@ -2093,14 +2097,22 @@ body {
   align-items: center;
   gap: 13px;
   border-top: 1px solid #eee8e3;
-  padding: 13px 0;
+  padding: 19px 0;
+}
+.managed-service-image {
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f3e9e8;
 }
 .managed-service-symbol {
   display: grid;
   place-items: center;
-  flex: 0 0 48px;
-  height: 48px;
-  border-radius: 9px;
+  flex: 0 0 60px;
+  height: 60px;
+  border-radius: 10px;
   background: #f3e9e8;
   color: #8e263b;
 }
@@ -2114,23 +2126,67 @@ body {
     600 15px Georgia,
     serif;
 }
-.managed-service-info span,
-.managed-service-info small {
+.managed-service-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.managed-service-info > span,
+.managed-service-info > small {
   color: #79716e;
   font-size: 10px;
 }
-.availability-control {
+.managed-service-info small {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+}
+.managed-service-title .status-chip {
+  padding: 5px 9px;
+}
+.availability-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  min-width: 104px;
   border: 1px solid #e9e2dd;
   border-radius: 8px;
+  background: #fffefd;
   padding: 7px 9px;
   color: #645b57;
-  font-size: 10px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
 }
-.availability-control input {
-  accent-color: #8e263b;
+.availability-switch:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.availability-switch-track {
+  display: flex;
+  align-items: center;
+  width: 34px;
+  height: 20px;
+  border-radius: 99px;
+  background: #c9c2be;
+  padding: 2px;
+  transition: background 160ms ease;
+}
+.availability-switch-track > span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
+  transition: transform 160ms ease;
+}
+.availability-switch.is-active .availability-switch-track {
+  background: #98263d;
+}
+.availability-switch.is-active .availability-switch-track > span {
+  transform: translateX(14px);
 }
 .icon-action {
   display: grid;
@@ -2147,6 +2203,11 @@ body {
 }
 .danger-action {
   color: #a84652;
+}
+.managed-service-row .danger-action {
+  border-color: #c52c2c;
+  background: #c52c2c;
+  color: white;
 }
 .dashboard-notice,
 .dashboard-error {
@@ -2282,13 +2343,10 @@ body {
     flex-wrap: wrap;
   }
   .managed-service-info {
-    min-width: calc(100% - 65px);
+    min-width: calc(100% - 85px);
   }
-  .managed-service-row > .status-chip {
-    margin-left: auto;
-  }
-  .availability-control {
-    margin-left: 60px;
+  .availability-switch {
+    margin-left: 73px;
   }
   .vendor-form-grid {
     grid-template-columns: 1fr;
