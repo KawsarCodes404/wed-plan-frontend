@@ -3061,6 +3061,31 @@ body {
 .auth-card button:hover {
   background-color: #742033;
 }
+.auth-password-control {
+  position: relative;
+}
+.auth-card .auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: #8e263b;
+  color: white;
+  cursor: pointer;
+}
+.auth-card .auth-password-toggle:hover {
+  background: #742033;
+}
+.auth-card .auth-password-toggle:focus-visible {
+  outline: 3px solid #8e263b40;
+  outline-offset: 2px;
+}
 .auth-card label:has(input[type="radio"]) {
   color: #514745;
 }

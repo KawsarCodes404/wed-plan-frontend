@@ -363,8 +363,8 @@ export function AuthForm({
             )
           }
         >
-          <div className="relative">
-            <Input
+          <div className="auth-password-control">
+            <input
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
@@ -377,18 +377,17 @@ export function AuthForm({
                   ? "Min 6 chars, 1 uppercase & 1 lowercase"
                   : "Enter your password"
               }
-              className={cn(fieldClasses, "pr-10")}
+              className={cn(fieldClasses, "pr-12")}
             />
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="icon-sm"
               onClick={handlePasswordToggle}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute top-1/2 right-1 -translate-y-1/2 text-white/60 hover:bg-white/5 hover:text-white"
+              aria-pressed={showPassword}
+              className="auth-password-toggle"
             >
-              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-            </Button>
+              {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+            </button>
           </div>
         </FormField>
 
