@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import type { ChangeEvent, FormEvent } from "react"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon, Heart } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -18,8 +18,9 @@ export type AuthMode = "sign-in" | "sign-up"
 
 const COPY = {
   "sign-in": {
-    title: "Welcome back",
-    subtitle: "Sign in to pick up where you left off.",
+    title: "Welcome Back to WedPlan",
+    subtitle:
+      "Sign in to explore service details, manage bookings, or grow your wedding studio.",
     submit: "Sign In",
     switchText: "Don't have an account?",
     switchLink: { href: "/sign-up", label: "Sign Up" },
@@ -27,8 +28,9 @@ const COPY = {
     extraLabel: "Forgot password?",
   },
   "sign-up": {
-    title: "Create your account",
-    subtitle: "Build a profile in minutes. The matches start tomorrow.",
+    title: "Create Your WedPlan Account",
+    subtitle:
+      "Join as a couple planning your wedding or as a vendor offering curated services.",
     submit: "Create Account",
     switchText: "Already have an account?",
     switchLink: { href: "/sign-in", label: "Sign In" },
@@ -54,8 +56,8 @@ const fieldClasses = controlClasses
 const labelClasses = "text-sm text-[#5e5551]"
 
 const ROLE_OPTIONS = [
-  { value: "customer", label: "Customer" },
-  { value: "vendor", label: "Vendor" },
+  { value: "customer", label: "Customer", description: "Plan & book services" },
+  { value: "vendor", label: "Vendor", description: "Publish wedding services" },
 ] as const
 
 export function AuthForm({
@@ -75,6 +77,7 @@ export function AuthForm({
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [selectedRole, setSelectedRole] = useState("customer")
 
   function handlePasswordToggle() {
     setShowPassword((prev) => !prev)
@@ -188,43 +191,35 @@ export function AuthForm({
     }
   }
 
+  async function handleGoogleSignIn() {
+    setIsSubmitting(true)
+    setSubmitError(null)
+    try {
+      const result = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: isSignUp ? "/" : redirectTo,
+        additionalData: isSignUp ? { role: selectedRole } : undefined,
+      })
+      if (result.error)
+        setSubmitError(
+          result.error.message || "Google sign in failed. Please try again."
+        )
+    } catch {
+      setSubmitError("Unable to connect to Google. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="auth-card w-full max-w-md rounded-2xl p-6 md:p-8">
-      {/* Toggle between the two pages */}
-      <nav
-        aria-label="Authentication"
-        className="grid grid-cols-2 gap-1 rounded-full border border-white/10 bg-[#161618] p-1"
-      >
-        <Link
-          href="/sign-in"
-          aria-current={mode === "sign-in" ? "page" : undefined}
-          className={cn(
-            "rounded-full py-2 text-center text-sm transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50",
-            mode === "sign-in"
-              ? "bg-brand shadow-brand-glow font-medium text-white"
-              : "text-white/60 hover:text-white"
-          )}
-        >
-          Sign In
-        </Link>
-        <Link
-          href="/sign-up"
-          aria-current={mode === "sign-up" ? "page" : undefined}
-          className={cn(
-            "rounded-full py-2 text-center text-sm transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50",
-            mode === "sign-up"
-              ? "bg-brand shadow-brand-glow font-medium text-white"
-              : "text-white/60 hover:text-white"
-          )}
-        >
-          Sign Up
-        </Link>
-      </nav>
-
-      <h1 className="font-manrope mt-6 text-2xl font-bold text-white md:text-3xl">
-        {copy.title}
-      </h1>
-      <p className="font-manrope mt-1 text-sm text-white/60">{copy.subtitle}</p>
+      <div className="auth-heading">
+        <span className="auth-heart">
+          <Heart size={21} fill="currentColor" />
+        </span>
+        <h1>{copy.title}</h1>
+        <p>{copy.subtitle}</p>
+      </div>
 
       <form
         onSubmit={handleSubmit}
@@ -232,55 +227,48 @@ export function AuthForm({
         noValidate={false}
       >
         {isSignUp && (
-          <FormField
-            id="name"
-            label="Full name"
-            required
-            labelClassName={labelClasses}
-          >
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              required
-              autoComplete="name"
-              placeholder="Alex Sterling"
-              className={fieldClasses}
-            />
-          </FormField>
+          <PillRadioGroup
+            name="role"
+            label="Account Role"
+            options={ROLE_OPTIONS}
+            defaultValue="customer"
+            value={selectedRole}
+            onValueChange={setSelectedRole}
+            gridClassName="grid-cols-2 gap-2"
+          />
         )}
 
         {isSignUp && (
           <FormField
             id="profileImage"
-            label="Profile image"
+            label="Profile photo"
             labelClassName={labelClasses}
             hint={<span className="text-xs text-white/40">Optional</span>}
           >
-            <div className="flex items-center gap-3">
-              {imagePreview && (
-                // eslint-disable-next-line @next/next/no-img-element -- blob: preview URL from the local file picker
-                <img
-                  src={imagePreview}
-                  alt="Selected profile preview"
-                  className="size-11 shrink-0 rounded-full border border-white/10 object-cover"
-                />
-              )}
+            <div className="auth-image-picker">
+              <span className="auth-image-preview">
+                {imagePreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- local file preview
+                  <img src={imagePreview} alt="Selected profile preview" />
+                ) : (
+                  <span>WP</span>
+                )}
+              </span>
               <div className="min-w-0 flex-1">
+                <label htmlFor="profileImage" className="auth-upload-button">
+                  Upload Profile Photo (Optional)
+                </label>
                 <Input
                   id="profileImage"
                   name="profileImage"
                   type="file"
-                  accept="image/*"
+                  accept="image/png,image/jpeg,image/webp"
                   onChange={handleImageChange}
                   disabled={isUploadingImage}
                   aria-describedby={
                     imageError ? "profileImage-error" : "profileImage-status"
                   }
-                  className={cn(
-                    fieldClasses,
-                    "cursor-pointer file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white/70 hover:file:bg-white/15"
-                  )}
+                  className="auth-file-input"
                 />
                 <p
                   id="profileImage-status"
@@ -291,7 +279,7 @@ export function AuthForm({
                     ? "Uploading image..."
                     : profileImageUrl
                       ? "Image uploaded and ready for your profile."
-                      : "PNG, JPG, or GIF. Maximum 5 MB."}
+                      : "Hosted on ImgBB (PNG, JPG, WebP, max 5 MB)."}
                 </p>
                 {imageError && (
                   <p
@@ -304,16 +292,35 @@ export function AuthForm({
                 )}
               </div>
               {imagePreview && (
-                <Button
+                <button
                   type="button"
-                  variant="ghost"
                   onClick={clearProfileImage}
                   disabled={isUploadingImage}
+                  className="auth-remove-image"
                 >
                   Remove
-                </Button>
+                </button>
               )}
             </div>
+          </FormField>
+        )}
+
+        {isSignUp && (
+          <FormField
+            id="name"
+            label="Full Name"
+            required
+            labelClassName={labelClasses}
+          >
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              required
+              autoComplete="name"
+              placeholder="Emma Watson"
+              className={fieldClasses}
+            />
           </FormField>
         )}
 
@@ -340,7 +347,12 @@ export function AuthForm({
           required
           labelClassName={labelClasses}
           hint={
-            !isSignUp && (
+            isSignUp ? (
+              <span className="auth-password-hint">
+                Must be at least 6 characters with 1 uppercase and 1 lowercase
+                letter.
+              </span>
+            ) : (
               <Link
                 href={copy.extraHref}
                 className="text-sm text-[#958eff] transition-colors outline-none hover:text-[#b1a8ff] focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -356,9 +368,14 @@ export function AuthForm({
               name="password"
               type={showPassword ? "text" : "password"}
               required
-              minLength={8}
+              minLength={isSignUp ? 6 : undefined}
+              pattern={isSignUp ? "(?=.*[a-z])(?=.*[A-Z]).{6,}" : undefined}
               autoComplete={isSignUp ? "new-password" : "current-password"}
-              placeholder="At least 8 characters"
+              placeholder={
+                isSignUp
+                  ? "Min 6 chars, 1 uppercase & 1 lowercase"
+                  : "Enter your password"
+              }
               className={cn(fieldClasses, "pr-10")}
             />
             <Button
@@ -374,39 +391,7 @@ export function AuthForm({
           </div>
         </FormField>
 
-        {isSignUp && (
-          <PillRadioGroup
-            name="role"
-            label="I am joining as"
-            options={ROLE_OPTIONS}
-            defaultValue="customer"
-            variant="solid"
-            gridClassName="grid-cols-2 gap-1.5"
-          />
-        )}
-
-        {isSignUp ? (
-          <CheckboxRow name="agreeTerms" required>
-            <span>
-              I agree to the{" "}
-              <Link
-                href="/terms"
-                className="text-[#958eff] hover:text-[#b1a8ff]"
-              >
-                Terms
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="text-[#958eff] hover:text-[#b1a8ff]"
-              >
-                Privacy Policy
-              </Link>
-            </span>
-          </CheckboxRow>
-        ) : (
-          <CheckboxRow name="remember">Remember me</CheckboxRow>
-        )}
+        {!isSignUp && <CheckboxRow name="remember">Remember me</CheckboxRow>}
 
         {submitError ? (
           <p
@@ -428,6 +413,40 @@ export function AuthForm({
               ? "Please wait..."
               : copy.submit}
         </Button>
+
+        <div className="auth-divider">
+          <span>OR CONTINUE WITH</span>
+        </div>
+        <button
+          type="button"
+          className="auth-google-button"
+          onClick={handleGoogleSignIn}
+          disabled={isSubmitting || isUploadingImage}
+        >
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path
+              fill="#4285F4"
+              d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.7c3.9-3.6 6-8.8 6-15Z"
+            />
+            <path
+              fill="#34A853"
+              d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.7-5.1c-1.8 1.2-4 1.9-6.8 1.9-5.2 0-9.6-3.5-11.2-8.2H5.9v5.2A20 20 0 0 0 24 44Z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M12.8 27.8a12 12 0 0 1 0-7.6V15H5.9a20 20 0 0 0 0 17.9l6.9-5.1Z"
+            />
+            <path
+              fill="#EA4335"
+              d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4A20 20 0 0 0 5.9 15l6.9 5.2c1.6-4.7 6-8.2 11.2-8.2Z"
+            />
+          </svg>
+          {isSubmitting
+            ? "Connecting..."
+            : isSignUp
+              ? `Sign up with Google (${selectedRole === "vendor" ? "Vendor" : "Customer"})`
+              : "Continue with Google"}
+        </button>
 
         <p className="text-center text-sm text-white/60">
           {copy.switchText}{" "}

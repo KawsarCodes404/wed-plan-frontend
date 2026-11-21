@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth"
 import { MongoClient } from "mongodb"
 import { mongodbAdapter } from "@better-auth/mongo-adapter"
+import { getOAuthState } from "better-auth/api"
 
 const client = new MongoClient(process.env.BETTER_AUTH_DB_URI as string)
 export const db = client.db("wed-plan")
@@ -8,6 +9,7 @@ export const db = client.db("wed-plan")
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
   },
   user: {
     additionalFields: {
@@ -65,12 +67,18 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => ({
-          data: {
-            ...user,
-            role: user.role === "vendor" ? "vendor" : "customer",
-          },
-        }),
+        before: async (user) => {
+          const oauthState = await getOAuthState()
+          return {
+            data: {
+              ...user,
+              role:
+                user.role === "vendor" || oauthState?.role === "vendor"
+                  ? "vendor"
+                  : "customer",
+            },
+          }
+        },
       },
     },
   },
