@@ -110,9 +110,17 @@ export function VendorServicesManager() {
       </div>
       {notice && <p className="dashboard-notice">{notice}</p>}
       {error && (
-        <p className="dashboard-error" role="alert">
-          {error}
-        </p>
+        <div className="dashboard-error" role="alert">
+          <p>{error}</p>
+          {error.includes("Free plan includes") && (
+            <Link
+              className="button button-primary"
+              href="/dashboard/vendor/subscription"
+            >
+              Upgrade to Premium <ArrowRight size={15} />
+            </Link>
+          )}
+        </div>
       )}
       {loading ? (
         <p className="dashboard-muted">Loading your services…</p>
@@ -359,9 +367,17 @@ export function VendorServiceForm({ service }: { service?: Service }) {
         </div>
       </div>
       {error && (
-        <p role="alert" className="dashboard-error">
-          {error}
-        </p>
+        <div role="alert" className="dashboard-error">
+          <p>{error}</p>
+          {error.includes("Free plan includes") && (
+            <Link
+              className="button button-primary"
+              href="/dashboard/vendor/subscription"
+            >
+              Upgrade to Premium <ArrowRight size={15} />
+            </Link>
+          )}
+        </div>
       )}
       <button className="button button-primary" disabled={saving || uploading}>
         {uploading
