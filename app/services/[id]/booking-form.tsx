@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { getApiToken } from "@/lib/api-token"
 import { Check, CircleCheck, MapPin } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
 
@@ -23,8 +24,7 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
     setSubmitting(true)
     setError("")
     try {
-      const token = (session as { session?: { token?: string } } | null)
-        ?.session?.token
+      const token = await getApiToken()
       if (!token)
         throw new Error(
           "Your sign-in session is missing. Please sign in again."

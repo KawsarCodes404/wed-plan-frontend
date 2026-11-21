@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { CalendarDays, MapPin } from "lucide-react"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 
 const apiBase = (
@@ -25,8 +26,7 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
   const [error, setError] = useState("")
   const [busy, setBusy] = useState("")
   const load = useCallback(async () => {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) {
       setLoading(false)
       return
@@ -49,8 +49,7 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
     void load()
   }, [load])
   async function update(row: Booking, status: string) {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) return
     setBusy(row._id)
     setError("")

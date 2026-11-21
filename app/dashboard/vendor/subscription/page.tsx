@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { BadgeCheck, Check, Crown } from "lucide-react"
 import { DashboardTitle } from "@/components/dashboard/dashboard-ui"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 
 const apiBase = (
@@ -18,10 +19,6 @@ type Transaction = {
   currency: string
   status: string
   createdAt: string
-}
-
-function getToken(session: unknown) {
-  return (session as { session?: { token?: string } } | null)?.session?.token
 }
 
 function formatAmount(amount: number, currency = "USD") {
@@ -44,10 +41,9 @@ export default function VendorSubscriptionPage() {
 
   useEffect(() => {
     if (isPending) return
-    const token = getToken(session)
-    if (!token) return
-
     async function loadSubscription() {
+      const token = await getApiToken()
+      if (!token) return
       try {
         const headers = { Authorization: `Bearer ${token}` }
         const [overviewResponse, transactionsResponse] = await Promise.all([
@@ -77,7 +73,7 @@ export default function VendorSubscriptionPage() {
   }, [isPending, session])
 
   async function upgrade() {
-    const token = getToken(session)
+    const token = await getApiToken()
     if (!token) {
       setError("Your session expired. Sign in again.")
       return

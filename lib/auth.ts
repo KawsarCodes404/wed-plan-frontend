@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth"
+import { jwt } from "better-auth/plugins"
 import { MongoClient } from "mongodb"
 import { mongodbAdapter } from "@better-auth/mongo-adapter"
 import { getOAuthState } from "better-auth/api"
@@ -91,4 +92,13 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+  plugins: [
+    jwt({
+      jwt: {
+        definePayload: ({ user }) => ({
+          role: user.role,
+        }),
+      },
+    }),
+  ],
 })

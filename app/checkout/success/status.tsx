@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { ArrowRight, BadgeCheck, Crown, RefreshCw, XCircle } from "lucide-react"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 
 const apiBase = (
@@ -24,8 +25,7 @@ export function CheckoutStatus({ sessionId }: { sessionId: string }) {
   useEffect(() => {
     let active = true
     async function check() {
-      const token = (session as { session?: { token?: string } } | null)
-        ?.session?.token
+      const token = await getApiToken()
       if (!token || !sessionId) {
         setStatus("failed")
         setMessage(

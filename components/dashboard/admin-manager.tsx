@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { BadgeCheck, MapPin, Shield, UserRound } from "lucide-react"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 
 const apiBase = (
@@ -49,8 +50,7 @@ export function AdminManager({
   const [busy, setBusy] = useState("")
   const [filter, setFilter] = useState(kind === "services" ? "Pending" : "")
   const load = useCallback(async () => {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) {
       setLoading(false)
       return
@@ -76,8 +76,7 @@ export function AdminManager({
     void load()
   }, [load])
   async function action(row: Service | User, operation: string) {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) return
     setBusy(row._id)
     setError("")

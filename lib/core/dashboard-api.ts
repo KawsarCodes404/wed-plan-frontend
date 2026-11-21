@@ -6,11 +6,11 @@ const apiBase = (
 ).replace(/\/$/, "")
 
 export async function dashboardApi<T>(path: string): Promise<T | null> {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.session?.token) return null
+  const result = await auth.api.getToken({ headers: await headers() })
+  if (!result?.token) return null
   try {
     const response = await fetch(`${apiBase}${path}`, {
-      headers: { Authorization: `Bearer ${session.session.token}` },
+      headers: { Authorization: `Bearer ${result.token}` },
       cache: "no-store",
     })
     if (!response.ok) return null

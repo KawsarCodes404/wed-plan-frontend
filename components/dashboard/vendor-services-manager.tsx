@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { ArrowRight, ImagePlus, Pencil, Trash2 } from "lucide-react"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
 
@@ -37,8 +38,7 @@ export function VendorServicesManager() {
   const [error, setError] = useState("")
   const [busy, setBusy] = useState("")
   const load = useCallback(async () => {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) {
       setLoading(false)
       return
@@ -59,8 +59,7 @@ export function VendorServicesManager() {
     void load()
   }, [load])
   async function update(service: Service, action: "availability" | "delete") {
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) return
     setBusy(service._id)
     setError("")
@@ -223,8 +222,7 @@ export function VendorServiceForm({ service }: { service?: Service }) {
   }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) {
       setError("Your sign-in session expired. Sign in again.")
       return

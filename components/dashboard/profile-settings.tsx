@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
 
@@ -50,8 +51,7 @@ export function ProfileSettings() {
   }
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const token = (session as { session?: { token?: string } } | null)?.session
-      ?.token
+    const token = await getApiToken()
     if (!token) return
     setSaving(true)
     setError("")

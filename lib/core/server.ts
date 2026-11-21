@@ -12,11 +12,11 @@ export const getSession = async () => {
 }
 
 export const getToken = async () => {
-  const session = await getSession()
-  if (!session || !session.session?.token) {
+  const result = await auth.api.getToken({ headers: await headers() })
+  if (!result?.token) {
     redirect("/unauthorized")
   }
-  return session.session.token
+  return result.token
 }
 
 export const authFetch = async (api: string) => {
