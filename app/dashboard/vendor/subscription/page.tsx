@@ -73,17 +73,11 @@ export default function VendorSubscriptionPage() {
   }, [isPending, session])
 
   async function upgrade() {
-    const token = await getApiToken()
-    if (!token) {
-      setError("Your session expired. Sign in again.")
-      return
-    }
     setBusy(true)
     setError("")
     try {
-      const response = await fetch(`${apiBase}/payments/checkout-session`, {
+      const response = await fetch("/api/checkout_sessions", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
       })
       const result = await response.json()
       if (!response.ok || !result.url)
