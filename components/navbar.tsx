@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   Heart,
   LayoutDashboard,
@@ -56,6 +56,7 @@ export default function Navbar({
   const pathname = usePathname()
   const router = useRouter()
   const accountMenuRef = useRef<HTMLDetailsElement>(null)
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const { data, isPending } = useSession()
   const session = isPending ? initialSession : data
   const role = session?.user?.role
@@ -68,19 +69,16 @@ export default function Navbar({
   const settingsHref = `${dashboardHref}/settings`
   useEffect(() => {
     function closeAccountMenu(event: MouseEvent) {
-      const menu = accountMenuRef.current
       if (
-        menu &&
         event.target instanceof Node &&
-        !menu.contains(event.target)
+        !accountMenuRef.current?.contains(event.target)
       ) {
-        menu.open = false
+        setAccountMenuOpen(false)
       }
     }
 
     function closeAccountMenuOnEscape(event: KeyboardEvent) {
-      const menu = accountMenuRef.current
-      if (event.key === "Escape" && menu?.open) menu.open = false
+      if (event.key === "Escape") setAccountMenuOpen(false)
     }
 
     document.addEventListener("click", closeAccountMenu)
@@ -130,8 +128,18 @@ export default function Navbar({
         </nav>
         <div className="header-actions">
           {session?.user ? (
-            <details className="account-menu" ref={accountMenuRef}>
-              <summary className="account-chip">
+            <details
+              className="account-menu"
+              ref={accountMenuRef}
+              open={accountMenuOpen}
+            >
+              <summary
+                className="account-chip"
+                onClick={(event) => {
+                  event.preventDefault()
+                  setAccountMenuOpen((open) => !open)
+                }}
+              >
                 {session.user.image ? (
                   <img src={session.user.image} alt="" />
                 ) : (
