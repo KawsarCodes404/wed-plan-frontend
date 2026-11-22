@@ -70,6 +70,12 @@ export function SiteFooter() {
         <span>
           © 2026 WedPlan Wedding Planning Platform. All rights reserved.
         </span>
+        <span className="footer-credit">
+          Animated ring by <a href="https://icons8.com/">Icons8</a> ·{" "}
+          <a href="https://icons8.com/icon/G8u35UC017wc/engagement-ring">
+            view icon
+          </a>
+        </span>
         <span>
           Crafted for couples &amp; verified wedding artisans worldwide.
         </span>

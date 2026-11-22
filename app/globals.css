@@ -495,9 +495,15 @@ body {
     background 0.22s ease,
     box-shadow 0.22s ease;
 }
+.button svg {
+  transition: transform 0.26s var(--wp-ease);
+}
 .button:hover {
   transform: translateY(-2px) scale(1.015);
   box-shadow: 0 8px 18px #3a1a251c;
+}
+.button:hover svg {
+  transform: translateX(2px);
 }
 .button:active {
   transform: translateY(0) scale(0.98);
@@ -1567,6 +1573,17 @@ body {
   align-items: center;
   gap: 5px;
 }
+.footer-credit {
+  white-space: nowrap;
+}
+.footer-credit a {
+  color: #8e263b;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.footer-credit a:hover {
+  color: #5f192a;
+}
 .footer-bottom svg {
   color: #9a3148;
 }
@@ -2106,6 +2123,41 @@ body {
   text-align: center;
   color: #34745a;
 }
+.booking-success-mark {
+  position: relative;
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff3d8;
+  box-shadow: 0 0 0 7px rgb(255 243 216 / 55%);
+  animation: booking-success-arrive 0.48s var(--wp-ease) both;
+}
+.booking-success-animation {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+.booking-success-check {
+  position: absolute;
+  right: -2px;
+  bottom: -1px;
+  border: 2px solid #effaf4;
+  border-radius: 50%;
+  background: #dff3e9;
+  color: #34745a;
+}
+@keyframes booking-success-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 .booking-success h3 {
   margin: 0;
   color: #342d2b;
@@ -2143,6 +2195,129 @@ body {
 .detail-not-found p {
   margin: 0;
   color: #79716e;
+}
+.app-fallback-page {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 32px 20px;
+  background:
+    radial-gradient(ellipse at 18% 12%, #f5e8e7 0, transparent 35%),
+    #fbf9f6;
+}
+.app-fallback-card {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 560px);
+  border: 1px solid #e9e2dd;
+  border-radius: 22px;
+  background: #fffefd;
+  padding: clamp(28px, 6vw, 54px);
+  box-shadow: 0 24px 70px rgb(41 36 35 / 8%);
+  text-align: center;
+}
+.fallback-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 42px;
+  color: #292423;
+  text-align: left;
+  text-decoration: none;
+}
+.fallback-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #8e263b;
+  color: white;
+}
+.fallback-brand > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.fallback-brand strong {
+  font: 600 23px Georgia, serif;
+}
+.fallback-brand small {
+  color: #79716e;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+}
+.fallback-eyebrow {
+  color: #9c5e61;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.fallback-code {
+  margin: 14px 0 0;
+  color: #f0e4e2;
+  font: 600 clamp(72px, 16vw, 112px) / 0.95 Georgia, serif;
+  letter-spacing: -0.08em;
+}
+.fallback-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: #f5e8e7;
+  color: #8e263b;
+}
+.fallback-icon-error {
+  background: #fff2e7;
+  color: #9b5b24;
+}
+.app-fallback-card h1 {
+  margin: 12px 0 0;
+  color: #292423;
+  font: 500 clamp(28px, 6vw, 38px) / 1.15 Georgia, serif;
+  letter-spacing: -0.035em;
+}
+.fallback-description {
+  max-width: 410px;
+  margin: 12px 0 0;
+  color: #79716e;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.fallback-reference {
+  margin: 12px 0 0;
+  color: #79716e;
+  font-size: 12px;
+}
+.fallback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+.fallback-actions .button {
+  min-height: 44px;
+  padding: 0 16px;
+  cursor: pointer;
+}
+@media (max-width: 480px) {
+  .app-fallback-card {
+    border-radius: 17px;
+    padding: 26px 20px;
+  }
+  .fallback-brand {
+    margin-bottom: 32px;
+  }
+  .fallback-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .fallback-actions .button {
+    width: 100%;
+  }
 }
 @media (max-width: 900px) {
   .service-detail-page {
@@ -2244,6 +2419,12 @@ body {
   height: 42px;
   place-items: center;
   border-radius: 11px;
+}
+.dashboard-stat-icon svg {
+  transition: transform 0.26s var(--wp-ease);
+}
+.dashboard-stat-card:hover .dashboard-stat-icon svg {
+  transform: rotate(-7deg) scale(1.08);
 }
 .dashboard-stat-card-featured {
   position: relative;
@@ -5250,6 +5431,10 @@ body {
   .admin-service-card {
     transition-duration: 0.01ms !important;
   }
+  .button svg,
+  .dashboard-stat-icon svg {
+    transition-duration: 0.01ms !important;
+  }
   .category-icon,
   .card-link svg,
   .text-link svg,
@@ -5274,6 +5459,24 @@ body {
   .card-link:hover svg,
   .text-link:hover svg {
     transform: none;
+  }
+  .button:hover svg,
+  .dashboard-stat-card:hover .dashboard-stat-icon svg {
+    transform: none;
+  }
+  .booking-success-mark {
+    animation: none;
+    background: #dff3e9;
+    box-shadow: none;
+  }
+  .booking-success-animation {
+    display: none;
+  }
+  .booking-success-check {
+    position: static;
+    width: 32px;
+    height: 32px;
+    border: 0;
   }
   .dashboard-skeleton-block {
     animation: none;
@@ -5441,5 +5644,168 @@ body {
   }
   .promise-feature-card {
     min-height: 0;
+  }
+}
+
+/* Keep the shared layouts comfortable between desktop and mobile sizes. */
+@media (max-width: 850px) {
+  .service-grid,
+  .testimonial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-overview-stat-grid,
+  .vendor-overview-stat-grid,
+  .customer-overview-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-service-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+    align-items: start;
+  }
+  .admin-service-image {
+    width: 64px;
+    height: 64px;
+  }
+  .admin-service-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    max-width: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .site-header-inner {
+    gap: 12px;
+  }
+  .desktop-nav {
+    display: none;
+  }
+  .header-actions {
+    margin-left: auto;
+    gap: 8px;
+  }
+  .header-actions .sign-in-link {
+    display: none;
+  }
+  .account-chip {
+    padding-right: 7px;
+  }
+  .account-chip > span:last-child {
+    display: none;
+  }
+  .mobile-menu-trigger {
+    display: inline-grid;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-copy h1 {
+    font-size: clamp(38px, 11vw, 50px);
+  }
+  .hero-photo {
+    min-height: 340px;
+  }
+  .hero-proof {
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hero-proof span {
+    font-size: 10px;
+  }
+  .hero-bottom {
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 9px;
+  }
+  .service-grid,
+  .testimonial-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-layout {
+    width: calc(100% - 24px);
+  }
+  .footer-main {
+    justify-items: center;
+    gap: 27px;
+    padding-block: 36px 30px;
+  }
+  .footer-brand-column,
+  .footer-col {
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+  }
+  .footer-about {
+    margin-inline: auto;
+  }
+  .footer-contact > a {
+    align-self: center;
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+  }
+  .footer-socials {
+    justify-content: center;
+  }
+  .footer-bottom {
+    align-items: center;
+    gap: 9px;
+    text-align: center;
+  }
+  .footer-credit {
+    flex-wrap: wrap;
+    justify-content: center;
+    white-space: normal;
+  }
+  .footer-bottom span:last-child {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 390px) {
+  .site-header-inner {
+    width: calc(100% - 24px);
+    gap: 8px;
+  }
+  .brand-lockup {
+    gap: 7px;
+  }
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+  .brand-lockup strong {
+    font-size: 20px;
+  }
+  .brand-lockup small {
+    font-size: 7px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .signup-button {
+    min-height: 36px;
+    padding-inline: 11px;
+    font-size: 12px;
+  }
+  .dashboard-sidebar-card [data-slot="sidebar-menu"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-layout .dashboard-page {
+    padding-inline: 12px;
+  }
+  .customer-recent-booking-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .customer-recent-booking-card > .status-chip {
+    justify-self: start;
+  }
+  .checkout-result-actions {
+    flex-direction: column;
+  }
+  .checkout-result-actions .button {
+    width: 100%;
   }
 }

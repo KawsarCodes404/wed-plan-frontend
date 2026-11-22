@@ -66,7 +66,16 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
       </p>
       {submitted ? (
         <div className="booking-success">
-          <CircleCheck size={36} />
+          <span className="booking-success-mark" aria-hidden="true">
+            <img
+              className="booking-success-animation"
+              src="/wedding-ring.gif"
+              alt=""
+              width={52}
+              height={52}
+            />
+            <CircleCheck className="booking-success-check" size={18} />
+          </span>
           <h3>Request sent</h3>
           <p>
             Your request is now pending vendor review. You can track its status

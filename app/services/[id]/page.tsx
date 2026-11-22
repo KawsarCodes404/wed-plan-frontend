@@ -31,13 +31,26 @@ type Service = {
 }
 
 async function getService(id: string): Promise<Service | null> {
+  const response = await fetch(
+    `${apiBase}/services/${encodeURIComponent(id)}`,
+    { cache: "no-store" }
+  )
+
+  if (response.status === 404) return null
+  if (!response.ok) {
+    throw new Error("We couldn’t load this service. Please try again.")
+  }
+
   try {
-    const response = await fetch(
-      `${apiBase}/services/${encodeURIComponent(id)}`,
-      { cache: "no-store" }
-    )
-    if (!response.ok) return null
     return (await response.json()) as Service
+  } catch {
+    throw new Error("We couldn’t read this service right now. Please try again.")
+  }
+}
+
+async function getServiceForMetadata(id: string): Promise<Service | null> {
+  try {
+    return await getService(id)
   } catch {
     return null
   }
@@ -49,7 +62,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const service = await getService(id)
+  const service = await getServiceForMetadata(id)
   if (!service) return { title: "Service not found | WedPlan" }
   return {
     title: `${service.serviceName} | WedPlan`,
