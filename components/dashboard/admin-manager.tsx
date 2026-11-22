@@ -1,7 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { BadgeCheck, MapPin, Shield, UserRound } from "lucide-react"
+import { Fragment } from "react"
+import {
+  BadgeCheck,
+  Ban,
+  Check,
+  Eye,
+  Shield,
+  Trash2,
+  UserRound,
+  X,
+} from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
@@ -17,7 +27,14 @@ type Service = {
   price: number
   description: string
   status: string
-  vendor?: { name?: string; businessName?: string; email?: string }
+  isActive?: boolean
+  images?: string[]
+  vendor?: {
+    name?: string
+    businessName?: string
+    email?: string
+    image?: string | null
+  }
 }
 type User = {
   _id: string
@@ -27,6 +44,7 @@ type User = {
   isBlocked: boolean
   businessName?: string
   subscriptionPlan?: string
+  image?: string | null
 }
 type Transaction = {
   _id: string
@@ -49,17 +67,30 @@ export function AdminManager({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [busy, setBusy] = useState("")
-  const [filter, setFilter] = useState(kind === "services" ? "Pending" : "")
+  const [filter, setFilter] = useState("")
+  const [search, setSearch] = useState("")
+  const [category, setCategory] = useState("")
+  const [viewingUser, setViewingUser] = useState("")
+  const serviceSearch = kind === "services" ? search : ""
   const load = useCallback(async () => {
+    if (!session) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
     const token = await getApiToken()
     if (!token) {
       setLoading(false)
       return
     }
     try {
-      const query = filter
-        ? `?${kind === "services" ? "status" : "role"}=${encodeURIComponent(filter)}`
-        : ""
+      const params = new URLSearchParams()
+      if (filter) params.set(kind === "services" ? "status" : "role", filter)
+      if (serviceSearch.trim()) {
+        params.set("search", serviceSearch.trim())
+      }
+      if (kind === "services" && category) params.set("category", category)
+      const query = params.size ? `?${params.toString()}` : ""
       const response = await fetch(`${apiBase}/admin/${kind}${query}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -72,11 +103,18 @@ export function AdminManager({
     } finally {
       setLoading(false)
     }
-  }, [session, kind, filter])
+  }, [session, kind, filter, serviceSearch, category])
   useEffect(() => {
-    void load()
+    const timeout = window.setTimeout(() => void load(), 0)
+    return () => window.clearTimeout(timeout)
   }, [load])
   async function action(row: Service | User, operation: string) {
+    if (
+      operation === "delete" &&
+      !window.confirm("Delete this service? This action cannot be undone.")
+    ) {
+      return
+    }
     const token = await getApiToken()
     if (!token) return
     setBusy(row._id)
@@ -85,8 +123,16 @@ export function AdminManager({
       body: unknown = {},
       method = "PATCH"
     if (kind === "services") {
-      endpoint = `services/${row._id}/review`
-      body = { status: operation }
+      if (operation === "delete") {
+        endpoint = `services/${row._id}`
+        method = "DELETE"
+      } else if (operation === "activate" || operation === "pause") {
+        endpoint = `services/${row._id}/availability`
+        body = { isActive: operation === "activate" }
+      } else {
+        endpoint = `services/${row._id}/review`
+        body = { status: operation }
+      }
     } else {
       endpoint = `users/${row._id}/block`
       body = { isBlocked: operation === "block" }
@@ -100,11 +146,10 @@ export function AdminManager({
         },
         body: JSON.stringify(body),
       })
-      const result = await response.json()
-      if (!response.ok)
-        throw new Error(result.message || "Could not save the change.")
+      const result = response.status === 204 ? {} : await response.json()
+      if (!response.ok) throw new Error(result.message || "Could not save the change.")
       toast.add({
-        title: result.message || "Change saved.",
+        title: result.message || (operation === "delete" ? "Service deleted." : "Change saved."),
         type: "success",
       })
       await load()
@@ -114,44 +159,101 @@ export function AdminManager({
       setBusy("")
     }
   }
+  const visibleUsers = (rows as (Service | User | Transaction)[])
+    .filter((row): row is User => kind === "users" && "role" in row)
+    .filter((row) => {
+      const query = search.trim().toLowerCase()
+      return (
+        !query ||
+        [row.name, row.email, row.businessName]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(query))
+      )
+    })
   return (
-    <section className="dashboard-panel">
-      <div className="dashboard-panel-heading">
-        <div>
-          <span className="eyebrow">WEDPLAN ADMIN</span>
-          <h2>
-            {kind === "services"
-              ? "Service review queue"
-              : kind === "users"
-                ? "User accounts"
+    <section
+      className={`dashboard-panel ${kind === "users" ? "admin-users-panel" : ""}`}
+    >
+      {kind !== "users" && (
+        <div className="dashboard-panel-heading">
+          <div>
+            <span className="eyebrow">WEDPLAN ADMIN</span>
+            <h2>
+              {kind === "services"
+                ? "Service review queue"
                 : "Subscription transactions"}
-          </h2>
+            </h2>
+          </div>
+          {kind === "services" && (
+            <select
+              className="admin-filter"
+              aria-label="Filter service status"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="">All services</option>
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+            </select>
+          )}
         </div>
-        {kind !== "transactions" && (
+      )}
+      {kind === "users" && (
+        <div className="admin-user-toolbar">
+          <input
+            type="search"
+            aria-label="Search users"
+            placeholder="Search by name, email, or business name…"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
           <select
             className="admin-filter"
-            aria-label="Filter records"
+            aria-label="Filter users by role"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(event) => setFilter(event.target.value)}
           >
-            {kind === "services" ? (
-              <>
-                <option value="">All services</option>
-                <option>Pending</option>
-                <option>Approved</option>
-                <option>Rejected</option>
-              </>
-            ) : (
-              <>
-                <option value="">All roles</option>
-                <option value="vendor">Vendors</option>
-                <option value="customer">Customers</option>
-                <option value="admin">Admins</option>
-              </>
-            )}
+            <option value="">All roles</option>
+            <option value="vendor">Vendors</option>
+            <option value="customer">Customers</option>
+            <option value="admin">Admins</option>
           </select>
-        )}
-      </div>
+        </div>
+      )}
+      {kind === "services" && (
+        <div className="admin-service-filters">
+          <input
+            aria-label="Search services"
+            placeholder="Search by service name or location…"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+          <select
+            aria-label="Filter service status"
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+          >
+            <option value="">All statuses</option>
+            <option>Pending</option>
+            <option>Approved</option>
+            <option>Rejected</option>
+          </select>
+          <select
+            aria-label="Filter service category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          >
+            <option value="">All categories</option>
+            <option>Photography &amp; Videography</option>
+            <option>Wedding Venues</option>
+            <option>Decoration &amp; Florist</option>
+            <option>Catering Services</option>
+            <option>Makeup &amp; Styling</option>
+            <option>Wedding Fashion</option>
+          </select>
+        </div>
+      )}
       {error && (
         <p role="alert" className="dashboard-error">
           {error}
@@ -165,116 +267,270 @@ export function AdminManager({
           <p>New marketplace activity will appear here.</p>
         </div>
       ) : kind === "services" ? (
-        <div className="admin-record-list">
+        <div className="admin-service-list">
           {(rows as Service[]).map((row) => (
-            <article className="admin-record" key={row._id}>
-              <span className="admin-record-icon">
-                <BadgeCheck size={18} />
-              </span>
-              <div className="admin-record-info">
-                <strong>{row.serviceName}</strong>
-                <span>
-                  {row.category} · ${Number(row.price).toLocaleString()}
+            <article className="admin-service-card" key={row._id}>
+              {row.images?.[0] ? (
+                <span
+                  className="admin-service-image"
+                  role="img"
+                  aria-label={`${row.serviceName} photo`}
+                  style={{ backgroundImage: `url("${row.images[0]}")` }}
+                />
+              ) : (
+                <span className="admin-service-image admin-service-image-empty">
+                  <BadgeCheck size={20} />
+                </span>
+              )}
+              <div className="admin-service-info">
+                <div className="admin-service-title-row">
+                  <strong>{row.serviceName}</strong>
+                  {row.status === "Pending" && (
+                    <span className="service-status-badge pending">Pending</span>
+                  )}
+                </div>
+                {row.status === "Approved" && (
+                  <span className="service-status-badge approved">
+                    Approved
+                  </span>
+                )}
+                {row.status === "Rejected" && (
+                  <span className="service-status-badge rejected">Rejected</span>
+                )}
+                <span className="admin-service-meta">
+                  {row.category} · ${Number(row.price).toLocaleString()} · {row.location}
                 </span>
                 <small>
-                  <MapPin size={12} />
-                  {row.location} ·{" "}
-                  {row.vendor?.businessName || row.vendor?.name || "Vendor"}
+                  Vendor: {row.vendor?.businessName || row.vendor?.name || "Vendor"}
+                  {row.vendor?.email ? ` (${row.vendor.email})` : ""}
                 </small>
-                <p>{row.description}</p>
+                {row.description && <p>{row.description}</p>}
               </div>
-              <span
-                className={`status-chip status-${row.status.toLowerCase()}`}
-              >
-                {row.status}
-              </span>
-              {row.status === "Pending" && (
-                <div className="admin-row-actions">
-                  <button
-                    className="button button-primary"
-                    disabled={busy === row._id}
-                    onClick={() => void action(row, "Approved")}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="button button-outline"
-                    disabled={busy === row._id}
-                    onClick={() => void action(row, "Rejected")}
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
+              <div className="admin-service-actions">
+                {row.status === "Pending" ? (
+                  <>
+                    <button
+                      className="admin-action-button approve"
+                      disabled={busy === row._id}
+                      onClick={() => void action(row, "Approved")}
+                    >
+                      <Check size={14} /> Approve
+                    </button>
+                    <button
+                      className="admin-action-button reject"
+                      disabled={busy === row._id}
+                      onClick={() => void action(row, "Rejected")}
+                    >
+                      <X size={14} /> Reject
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {row.status === "Approved" && (
+                      <>
+                        <button
+                          className="admin-action-button reject"
+                          disabled={busy === row._id}
+                          onClick={() => void action(row, "Rejected")}
+                        >
+                          <X size={14} /> Reject
+                        </button>
+                        <button
+                          className="availability-toggle"
+                          type="button"
+                          role="switch"
+                          aria-checked={row.isActive !== false}
+                          aria-label={`${row.isActive === false ? "Activate" : "Pause"} ${row.serviceName}`}
+                          disabled={busy === row._id}
+                          onClick={() => void action(row, row.isActive === false ? "activate" : "pause")}
+                        >
+                          <span>{row.isActive === false ? "Inactive" : "Active"}</span>
+                          <span className="availability-track" aria-hidden="true" />
+                        </button>
+                      </>
+                    )}
+                    {row.status === "Rejected" && (
+                      <button
+                        className="admin-action-button approve"
+                        disabled={busy === row._id}
+                        onClick={() => void action(row, "Approved")}
+                      >
+                        <Check size={14} /> Approve
+                      </button>
+                    )}
+                  </>
+                )}
+                <button
+                  className="admin-action-button delete"
+                  disabled={busy === row._id}
+                  onClick={() => void action(row, "delete")}
+                >
+                  <Trash2 size={14} /> Delete
+                </button>
+              </div>
             </article>
           ))}
         </div>
       ) : kind === "users" ? (
-        <div className="admin-record-list">
-          {(rows as User[]).map((row) => (
-            <article className="admin-user" key={row._id}>
-              <span className="admin-record-icon">
-                <UserRound size={18} />
-              </span>
-              <div className="admin-record-info">
-                <strong>
-                  {row.name || row.businessName || "WedPlan member"}
-                </strong>
-                <span>{row.email}</span>
-                <small>
-                  {row.role}
-                  {row.subscriptionPlan === "Premium" ? " · Premium" : ""}
-                </small>
-              </div>
-              <span
-                className={`status-chip ${row.isBlocked ? "status-rejected" : "status-accepted"}`}
-              >
-                {row.isBlocked ? "Blocked" : "Active"}
-              </span>
-              <button
-                className="button button-outline"
-                disabled={busy === row._id || row.role === "admin"}
-                onClick={() =>
-                  void action(row, row.isBlocked ? "unblock" : "block")
-                }
-              >
-                <Shield size={14} />
-                {row.isBlocked ? "Unblock" : "Block"}
-              </button>
-            </article>
-          ))}
+        <div className="admin-users-table-scroll">
+          <table className="admin-users-table">
+            <thead>
+              <tr>
+                <th scope="col">User</th>
+                <th scope="col">Role</th>
+                <th scope="col">Plan</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleUsers.map((row) => (
+                  <Fragment key={row._id}>
+                    <tr>
+                      <td>
+                        <span className="admin-user-identity">
+                          {row.image ? (
+                            <img src={row.image} alt="" />
+                          ) : (
+                            <span className="admin-user-initials">
+                              {(row.name || row.businessName || "W")
+                                .split(/\s+/)
+                                .map((part) => part[0])
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()}
+                            </span>
+                          )}
+                          <span>
+                            <strong>
+                              {row.name || row.businessName || "WedPlan member"}
+                            </strong>
+                            <small>{row.email}</small>
+                          </span>
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-user-role">
+                          {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
+                        </span>
+                      </td>
+                      <td>
+                        {row.role === "vendor" ? (
+                          <span
+                            className={`admin-user-plan ${row.subscriptionPlan === "Premium" ? "premium" : ""}`}
+                          >
+                            {row.subscriptionPlan || "Free"}
+                          </span>
+                        ) : (
+                          <span className="admin-user-no-plan">—</span>
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`admin-user-status ${row.isBlocked ? "blocked" : "active"}`}
+                        >
+                          {row.isBlocked ? "Blocked" : "Active"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-user-actions">
+                          <button
+                            type="button"
+                            className="admin-user-view"
+                            aria-expanded={viewingUser === row._id}
+                            onClick={() =>
+                              setViewingUser((current) =>
+                                current === row._id ? "" : row._id
+                              )
+                            }
+                          >
+                            <Eye size={14} /> View
+                          </button>
+                          <button
+                            type="button"
+                            className={`admin-user-block ${row.isBlocked ? "unblock" : ""}`}
+                            disabled={busy === row._id || row.role === "admin"}
+                            onClick={() =>
+                              void action(row, row.isBlocked ? "unblock" : "block")
+                            }
+                          >
+                            {row.isBlocked ? <Shield size={14} /> : <Ban size={14} />}
+                            {row.isBlocked ? "Unblock" : "Block"}
+                          </button>
+                        </span>
+                      </td>
+                    </tr>
+                    {viewingUser === row._id && (
+                      <tr className="admin-user-details-row">
+                        <td colSpan={5}>
+                          <strong>Account details</strong>
+                          <span>{row.businessName || "No business name on file"}</span>
+                          <span>Account ID: {row._id}</span>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))}
+              {visibleUsers.length === 0 && (
+                <tr>
+                  <td className="admin-users-empty" colSpan={5}>
+                    No users match your search.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       ) : (
-        <div className="admin-record-list">
-          {(rows as Transaction[]).map((row) => (
-            <article className="admin-user" key={row._id}>
-              <span className="admin-record-icon">
-                <BadgeCheck size={18} />
-              </span>
-              <div className="admin-record-info">
-                <strong>
-                  {row.vendor?.businessName ||
-                    row.vendor?.name ||
-                    "Vendor subscription"}
-                </strong>
-                <span>{row.vendor?.email || row.plan}</span>
-                <small>
-                  {row.plan} · {new Date(row.createdAt).toLocaleDateString()}
-                </small>
-              </div>
-              <span
-                className={`status-chip ${row.status === "Completed" ? "status-accepted" : "status-pending"}`}
-              >
-                {row.status}
-              </span>
-              <strong className="transaction-total">
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: (row.currency || "usd").toUpperCase(),
-                }).format((row.amount || 0) / 100)}
-              </strong>
-            </article>
-          ))}
+        <div className="admin-transactions-scroll">
+          <table className="admin-transactions-table">
+            <thead>
+              <tr>
+                <th scope="col">Vendor</th>
+                <th scope="col">Plan</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Transaction date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(rows as Transaction[]).map((row) => (
+                <tr key={row._id}>
+                  <td>
+                    <span className="admin-transaction-vendor">
+                      <strong>
+                        {row.vendor?.businessName ||
+                          row.vendor?.name ||
+                          "Vendor subscription"}
+                      </strong>
+                      {row.vendor?.email && <small>{row.vendor.email}</small>}
+                    </span>
+                  </td>
+                  <td>{row.plan}</td>
+                  <td className="admin-transaction-amount">
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: (row.currency || "usd").toUpperCase(),
+                    }).format((row.amount || 0) / 100)}
+                  </td>
+                  <td>
+                    <span
+                      className={`admin-transaction-status ${row.status.toLowerCase()}`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="admin-transaction-date">
+                    {new Date(row.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </section>

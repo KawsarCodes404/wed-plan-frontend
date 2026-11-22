@@ -1,5 +1,12 @@
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import {
+  BriefcaseBusiness,
+  CalendarCheck,
+  CheckCircle2,
+  Clock3,
+  Crown,
+  PlusCircle,
+} from "lucide-react"
 import { dashboardApi } from "@/lib/core/dashboard-api"
 import { DashboardTitle, StatCards } from "@/components/dashboard/dashboard-ui"
 
@@ -14,39 +21,54 @@ type Overview = {
 export default async function VendorOverviewPage() {
   const data = await dashboardApi<Overview>("/vendor/overview")
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page vendor-overview-page">
       <DashboardTitle
-        title="Vendor overview"
-        description="Keep your services, inquiries, and wedding calendar moving."
+        title="Vendor Dashboard Overview"
+        description="Monitor your published wedding services, incoming couple requests, and subscription status."
       />
       <StatCards
+        className="vendor-overview-stat-grid"
         items={[
-          { label: "Total services", value: data?.serviceCount ?? "—" },
           {
-            label: "Approved & active",
+            label: "Total Services",
+            value: data?.serviceCount ?? "—",
+            iconTone: "stat-rose",
+            icon: <BriefcaseBusiness size={19} />,
+          },
+          {
+            label: "Approved & Active",
             value: data?.activeServices ?? "—",
-            tone: "stat-green",
+            iconTone: "stat-green",
+            icon: <CheckCircle2 size={19} />,
           },
           {
-            label: "Pending requests",
+            label: "Pending Requests",
             value: data?.pendingBookings ?? "—",
-            tone: "stat-amber",
+            iconTone: "stat-amber",
+            icon: <Clock3 size={19} />,
           },
           {
-            label: "Accepted bookings",
+            label: "Accepted Bookings",
             value: data?.acceptedBookings ?? "—",
-            tone: "stat-blue",
+            iconTone: "stat-blue",
+            icon: <CalendarCheck size={19} />,
           },
         ]}
       />
-      <section className="dashboard-plan-card">
-        <div>
-          <span className="eyebrow">YOUR CURRENT PLAN</span>
-          <h2>{data?.subscriptionPlan || "Free"} plan</h2>
+      <section
+        className={`dashboard-plan-card vendor-overview-plan ${data?.subscriptionPlan === "Premium" ? "premium" : "free"}`}
+      >
+        <div className="vendor-plan-copy">
+          <h2>
+            <Crown size={18} /> Current Subscription Plan
+            <span className="vendor-plan-badge">
+              {data?.subscriptionPlan || "Free"} Plan
+            </span>
+          </h2>
           <p>
             {data?.subscriptionPlan === "Premium"
-              ? "Your studio is on Premium with unlimited active listings."
-              : "Free includes up to 3 active services. Upgrade when your studio is ready for more."}
+              ? "Your studio is on Premium with unlimited active wedding services."
+              : "Free Plan allows up to 3 active wedding services. Upgrade to Premium for unlimited services."}
           </p>
         </div>
         <div className="dashboard-actions">
@@ -54,41 +76,15 @@ export default async function VendorOverviewPage() {
             className="button button-outline"
             href="/dashboard/vendor/add-service"
           >
-            Add a service <ArrowRight size={15} />
+            <PlusCircle size={15} /> Add Service
           </Link>
           <Link
             className="button button-primary"
             href="/dashboard/vendor/subscription"
           >
-            Explore plans
-          </Link>
-        </div>
-      </section>
-      <section className="dashboard-panel">
-        <div className="dashboard-panel-heading">
-          <div>
-            <span className="eyebrow">NEXT STEPS</span>
-            <h2>Make your WedPlan workspace yours</h2>
-          </div>
-        </div>
-        <div className="dashboard-shortcuts">
-          <Link href="/dashboard/vendor/services">
-            <strong>Review your services</strong>
-            <span>
-              Edit details, images, and availability. <ArrowRight size={14} />
-            </span>
-          </Link>
-          <Link href="/dashboard/vendor/bookings">
-            <strong>Respond to couples</strong>
-            <span>
-              Review incoming date-specific requests. <ArrowRight size={14} />
-            </span>
-          </Link>
-          <Link href="/dashboard/vendor/settings">
-            <strong>Complete your profile</strong>
-            <span>
-              Help couples get to know your business. <ArrowRight size={14} />
-            </span>
+            {data?.subscriptionPlan === "Premium"
+              ? "Manage Subscription"
+              : "Upgrade to Premium"}
           </Link>
         </div>
       </section>

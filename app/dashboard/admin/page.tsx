@@ -1,5 +1,14 @@
 import Link from "next/link"
-import { ArrowRight, ClipboardCheck, CreditCard, Users } from "lucide-react"
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  CheckCircle2,
+  Clock3,
+  CreditCard,
+  Store,
+  UserRound,
+  Users,
+} from "lucide-react"
 import { dashboardApi } from "@/lib/core/dashboard-api"
 import { DashboardTitle, StatCards } from "@/components/dashboard/dashboard-ui"
 
@@ -16,70 +25,93 @@ type Overview = {
 export default async function AdminOverviewPage() {
   const data = await dashboardApi<Overview>("/admin/overview")
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page admin-overview-page">
       <DashboardTitle
-        title="Admin overview"
-        description="Review marketplace activity and keep WedPlan running smoothly."
+        title="Admin Dashboard Overview"
+        description="Monitor platform growth, approve vendor services, manage users, and audit Stripe transactions."
       />
       <StatCards
+        className="admin-overview-stat-grid"
         items={[
-          { label: "Total users", value: data?.totalUsers ?? "—" },
           {
-            label: "Wedding vendors",
+            label: "Total registered users",
+            value: data?.totalUsers ?? "—",
+            tone: "stat-rose",
+            icon: <Users size={19} />,
+          },
+          {
+            label: "Total vendors",
             value: data?.vendors ?? "—",
             tone: "stat-blue",
+            icon: <Store size={19} />,
           },
           {
-            label: "Customer accounts",
+            label: "Total customers",
             value: data?.customers ?? "—",
             tone: "stat-green",
+            icon: <UserRound size={19} />,
           },
           {
-            label: "Service reviews",
+            label: "Total services",
+            value: data?.serviceCount ?? "—",
+            tone: "stat-cyan",
+            icon: <BriefcaseBusiness size={19} />,
+          },
+          {
+            label: "Pending services",
             value: data?.pendingServices ?? "—",
             tone: "stat-amber",
+            icon: <Clock3 size={19} />,
+          },
+          {
+            label: "Total transactions",
+            value: data?.transactionCount ?? "—",
+            tone: "stat-violet",
+            icon: <CreditCard size={19} />,
           },
         ]}
       />
-      <section className="dashboard-panel">
-        <div className="dashboard-panel-heading">
+      <div className="admin-overview-panels">
+        <section className="dashboard-panel admin-revenue-panel">
+          <h2>
+            <CheckCircle2 size={18} /> Verified Subscription Revenue
+          </h2>
+          <strong className="admin-revenue-total">
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              maximumFractionDigits: 0,
+            }).format((data?.revenue ?? 0) / 100)}
+          </strong>
+          <p>
+            Calculated strictly from Stripe webhook-verified completed
+            transactions.
+          </p>
+          <Link
+            className="button button-outline"
+            href="/dashboard/admin/transactions"
+          >
+            View transactions <ArrowRight size={14} />
+          </Link>
+        </section>
+        <section className="dashboard-panel admin-moderation-panel">
+          <h2>Quick Moderation</h2>
           <div>
-            <span className="eyebrow">MARKETPLACE OPERATIONS</span>
-            <h2>Review and manage</h2>
+            <Link
+              className="button button-primary"
+              href="/dashboard/admin/services"
+            >
+              Review Pending Services ({data?.pendingServices ?? 0})
+            </Link>
+            <Link
+              className="button button-outline"
+              href="/dashboard/admin/users"
+            >
+              Manage Users
+            </Link>
           </div>
-        </div>
-        <div className="dashboard-shortcuts">
-          <Link href="/dashboard/admin/users">
-            <span className="shortcut-icon">
-              <Users size={18} />
-            </span>
-            <strong>Manage users</strong>
-            <span>
-              Review accounts and access. <ArrowRight size={14} />
-            </span>
-          </Link>
-          <Link href="/dashboard/admin/services">
-            <span className="shortcut-icon">
-              <ClipboardCheck size={18} />
-            </span>
-            <strong>Review services</strong>
-            <span>
-              {data?.pendingServices ?? 0} waiting for approval.{" "}
-              <ArrowRight size={14} />
-            </span>
-          </Link>
-          <Link href="/dashboard/admin/transactions">
-            <span className="shortcut-icon">
-              <CreditCard size={18} />
-            </span>
-            <strong>View transactions</strong>
-            <span>
-              {data?.transactionCount ?? 0} subscription records.{" "}
-              <ArrowRight size={14} />
-            </span>
-          </Link>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

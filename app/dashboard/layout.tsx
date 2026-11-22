@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { SiteNavbar } from "@/components/side-navbar"
+import { SiteFooter } from "@/app/components/SiteFooter"
 
 export default async function DashboardLayout({
   children,
@@ -14,6 +15,7 @@ export default async function DashboardLayout({
         <DashboardSidebar />
         <main className="dashboard-main">{children}</main>
       </SidebarProvider>
+      <SiteFooter />
     </>
   )
 }

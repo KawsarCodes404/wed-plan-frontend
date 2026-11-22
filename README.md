@@ -4,7 +4,8 @@ WedPlan is a marketplace where couples can find wedding vendors and request book
 
 ## Links
 
-- Live site: [https://wedplan.nazmussakib.dev](https://wedplan.nazmussakib.dev)
+- Live site: [https://wedplan-marketplace.vercel.app](https://wedplan-marketplace.vercel.app)
+- API: [https://wedplan-api-cyan.vercel.app](https://wedplan-api-cyan.vercel.app)
 - Frontend repository: [wed-plan-frontend](https://github.com/KawsarCodes404/wed-plan-frontend)
 - Backend repository: [wed-plan-backend](https://github.com/KawsarCodes404/wed-plan-backend)
 

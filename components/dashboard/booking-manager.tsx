@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { CalendarDays, MapPin } from "lucide-react"
+import { CalendarDays, Eye, MapPin } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
@@ -15,9 +15,25 @@ type Booking = {
   eventDate: string
   eventLocation: string
   message?: string
-  service?: { serviceName?: string; price?: number }
+  createdAt?: string
+  service?: {
+    serviceName?: string
+    price?: number
+    image?: string
+    images?: string[]
+  }
   customer?: { name?: string; email?: string }
   vendor?: { businessName?: string; name?: string }
+}
+
+function formatBookingDate(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 export function BookingManager({ role }: { role: "customer" | "vendor" }) {
@@ -26,6 +42,7 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [busy, setBusy] = useState("")
+  const [expandedBooking, setExpandedBooking] = useState("")
   const load = useCallback(async () => {
     const token = await getApiToken()
     if (!token) {
@@ -82,15 +99,21 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
     }
   }
   return (
-    <section className="dashboard-panel">
-      <div className="dashboard-panel-heading">
-        <div>
-          <span className="eyebrow">
-            {role === "vendor" ? "COUPLE INQUIRIES" : "YOUR WEDDING PLANS"}
-          </span>
-          <h2>{role === "vendor" ? "Booking requests" : "My bookings"}</h2>
+    <section
+      className={
+        role === "customer"
+          ? "customer-bookings-manager"
+          : "dashboard-panel"
+      }
+    >
+      {role === "vendor" && (
+        <div className="dashboard-panel-heading">
+          <div>
+            <span className="eyebrow">COUPLE INQUIRIES</span>
+            <h2>Booking requests</h2>
+          </div>
         </div>
-      </div>
+      )}
       {error && (
         <p role="alert" className="dashboard-error">
           {error}
@@ -112,7 +135,79 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
         </div>
       ) : (
         <div className="dashboard-booking-list">
-          {rows.map((row) => (
+          {rows.map((row) => role === "customer" ? (
+            <article className="customer-booking-card" key={row._id}>
+              <div className="customer-booking-image">
+                {row.service?.images?.[0] || row.service?.image ? (
+                  <img
+                    src={row.service?.images?.[0] || row.service?.image || ""}
+                    alt=""
+                  />
+                ) : (
+                  <CalendarDays size={22} />
+                )}
+              </div>
+              <div className="customer-booking-content">
+                <div className="customer-booking-heading">
+                  <h3>{row.service?.serviceName || "Wedding service"}</h3>
+                  <span
+                    className={`status-chip status-${row.status.toLowerCase()}`}
+                  >
+                    {row.status}
+                  </span>
+                </div>
+                <p className="customer-booking-vendor">
+                  Vendor: {row.vendor?.businessName || row.vendor?.name || "Wedding vendor"}
+                  {row.service?.price !== undefined && (
+                    <> · ${Number(row.service.price).toLocaleString()}</>
+                  )}
+                </p>
+                <div className="customer-booking-meta">
+                  <span>
+                    <CalendarDays size={14} /> Event: {formatBookingDate(row.eventDate)}
+                  </span>
+                  <span>
+                    <MapPin size={14} /> {row.eventLocation}
+                  </span>
+                  {row.createdAt && (
+                    <span>
+                      Requested: {formatBookingDate(row.createdAt)}
+                    </span>
+                  )}
+                </div>
+                {expandedBooking === row._id && (
+                  <div className="customer-booking-extra">
+                    {row.message ? (
+                      <p>{row.message}</p>
+                    ) : (
+                      <p>No additional message was added to this request.</p>
+                    )}
+                    {row.status === "Pending" && (
+                      <button
+                        disabled={busy === row._id}
+                        className="button button-outline"
+                        onClick={() => void update(row, "Cancelled")}
+                      >
+                        Cancel request
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="customer-booking-details-button"
+                aria-expanded={expandedBooking === row._id}
+                onClick={() =>
+                  setExpandedBooking((current) =>
+                    current === row._id ? "" : row._id
+                  )
+                }
+              >
+                <Eye size={14} /> Details
+              </button>
+            </article>
+          ) : (
             <article className="request-card" key={row._id}>
               <div className="request-card-top">
                 <div>
@@ -160,17 +255,6 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
                     onClick={() => void update(row, "Rejected")}
                   >
                     Decline
-                  </button>
-                </div>
-              )}
-              {role === "customer" && row.status === "Pending" && (
-                <div className="request-actions">
-                  <button
-                    disabled={busy === row._id}
-                    className="button button-outline"
-                    onClick={() => void update(row, "Cancelled")}
-                  >
-                    Cancel request
                   </button>
                 </div>
               )}

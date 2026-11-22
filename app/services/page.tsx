@@ -176,6 +176,10 @@ export default function ServicesPage() {
     void loadServices()
   }, [loadServices])
 
+  const hasSearchFilters = Boolean(
+    filters.search.trim() || filters.category || filters.location.trim()
+  )
+
   return (
     <>
       <main className="services-page">
@@ -306,10 +310,15 @@ export default function ServicesPage() {
               <span className="empty-heart">
                 <Search size={21} />
               </span>
-              <h2>No matching wedding services found</h2>
+              <h2>
+                {hasSearchFilters
+                  ? "No matching wedding services found"
+                  : "No approved wedding services yet"}
+              </h2>
               <p>
-                Try adjusting your search keywords, category, or location
-                filters.
+                {hasSearchFilters
+                  ? "Try adjusting your search keywords, category, or location filters."
+                  : "New vendor services appear here after an administrator reviews and approves them. Check the Service Reviews section in the admin dashboard."}
               </p>
               <button
                 className="button button-outline"

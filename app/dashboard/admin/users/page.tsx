@@ -4,8 +4,8 @@ export default function AdminUsersPage() {
   return (
     <div className="dashboard-page">
       <DashboardTitle
-        title="User accounts"
-        description="Review marketplace members and protect the WedPlan community."
+        title="Manage Users"
+        description="Search registered users, filter by role, inspect details, and manage account access."
       />
       <AdminManager kind="users" />
     </div>

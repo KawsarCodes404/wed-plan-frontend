@@ -1,5 +1,13 @@
 import Link from "next/link"
-import { ArrowRight, CalendarDays, MapPin } from "lucide-react"
+import {
+  CalendarDays,
+  Eye,
+  CircleCheck,
+  CircleX,
+  Clock3,
+  MapPin,
+  Search,
+} from "lucide-react"
 import { dashboardApi } from "@/lib/core/dashboard-api"
 import { DashboardTitle, StatCards } from "@/components/dashboard/dashboard-ui"
 
@@ -8,7 +16,13 @@ type Booking = {
   eventDate: string
   eventLocation: string
   status: string
-  service?: { serviceName?: string; price?: number }
+  createdAt?: string
+  service?: {
+    serviceName?: string
+    price?: number
+    image?: string
+    images?: string[]
+  }
   vendor?: { businessName?: string; name?: string }
 }
 type Overview = {
@@ -19,84 +33,141 @@ type Overview = {
   recent: Booking[]
 }
 
+function formatBookingDate(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
 export default async function CustomerOverviewPage() {
   const data = await dashboardApi<Overview>("/customer/overview")
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page customer-overview-page">
       <DashboardTitle
-        title="Your wedding overview"
-        description="A little more organized, so you can focus on what matters."
+        title="Customer Overview"
+        description="Track your wedding service inquiries and confirmed vendors at a glance."
       />
       <StatCards
+        className="customer-overview-stat-grid"
         items={[
-          { label: "Booking requests", value: data?.total ?? "—" },
-          { label: "Pending", value: data?.pending ?? "—", tone: "stat-amber" },
           {
-            label: "Accepted",
-            value: data?.accepted ?? "—",
-            tone: "stat-green",
+            label: "Total Booking Requests",
+            value: data?.total ?? "—",
+            iconTone: "stat-rose",
+            icon: <CalendarDays size={18} />,
           },
           {
-            label: "Declined",
+            label: "Pending Bookings",
+            value: data?.pending ?? "—",
+            iconTone: "stat-amber",
+            icon: <Clock3 size={18} />,
+          },
+          {
+            label: "Accepted Bookings",
+            value: data?.accepted ?? "—",
+            iconTone: "stat-green",
+            icon: <CircleCheck size={18} />,
+          },
+          {
+            label: "Rejected Bookings",
             value: data?.rejected ?? "—",
-            tone: "stat-rose",
+            iconTone: "stat-rose",
+            icon: <CircleX size={18} />,
           },
         ]}
       />
-      <section className="dashboard-panel">
+      <section className="dashboard-panel customer-overview-bookings">
         <div className="dashboard-panel-heading">
-          <div>
-            <span className="eyebrow">YOUR LATEST INQUIRIES</span>
-            <h2>Recent booking requests</h2>
+          <h2>Recent Booking Requests</h2>
+          <div className="customer-overview-actions">
+            <Link
+              className="button button-outline"
+              href="/dashboard/customer/bookings"
+            >
+              Manage All
+            </Link>
+            <Link className="button button-primary" href="/services">
+              <Search size={14} /> Browse Services
+            </Link>
           </div>
-          <Link className="text-link" href="/dashboard/customer/bookings">
-            Manage all <ArrowRight size={15} />
-          </Link>
         </div>
         {data?.recent?.length ? (
           <div className="dashboard-booking-list">
             {data.recent.map((booking) => (
-              <article className="dashboard-booking-row" key={booking._id}>
-                <div className="booking-date-icon">
-                  <CalendarDays size={19} />
+              <article
+                className="customer-recent-booking-card"
+                key={booking._id}
+              >
+                <div className="customer-recent-booking-thumb">
+                  {booking.service?.images?.[0] || booking.service?.image ? (
+                    <img
+                      src={
+                        booking.service?.images?.[0] ||
+                        booking.service?.image ||
+                        ""
+                      }
+                      alt=""
+                    />
+                  ) : (
+                    <CalendarDays size={21} />
+                  )}
                 </div>
-                <div className="booking-row-main">
-                  <strong>
-                    {booking.service?.serviceName || "Wedding service"}
-                  </strong>
-                  <span>
+                <div className="customer-recent-booking-content">
+                  <div className="customer-recent-booking-title-row">
+                    <h3>
+                      {booking.service?.serviceName || "Wedding service"}
+                    </h3>
+                    <span
+                      className={`status-chip status-${booking.status.toLowerCase()}`}
+                    >
+                      {booking.status}
+                    </span>
+                  </div>
+                  <p className="customer-recent-booking-vendor">
                     {booking.vendor?.businessName ||
                       booking.vendor?.name ||
-                      "Vendor"}
-                  </span>
+                      "Wedding vendor"}
+                    {booking.service?.price !== undefined && (
+                      <strong>
+                        ${Number(booking.service.price).toLocaleString()}
+                      </strong>
+                    )}
+                  </p>
+                  <div className="customer-recent-booking-meta">
+                    <span>
+                      <CalendarDays size={14} />
+                      Event {formatBookingDate(booking.eventDate)}
+                    </span>
+                    <span>
+                      <MapPin size={14} />
+                      {booking.eventLocation}
+                    </span>
+                    {booking.createdAt && (
+                      <span className="customer-recent-booking-requested">
+                        Requested {formatBookingDate(booking.createdAt)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="booking-row-meta">
-                  <span>
-                    <CalendarDays size={14} />
-                    {booking.eventDate}
-                  </span>
-                  <span>
-                    <MapPin size={14} />
-                    {booking.eventLocation}
-                  </span>
-                </div>
-                <span
-                  className={`status-chip status-${booking.status.toLowerCase()}`}
+                <Link
+                  className="customer-recent-booking-details"
+                  href="/dashboard/customer/bookings"
                 >
-                  {booking.status}
-                </span>
+                  <Eye size={14} /> Details
+                </Link>
               </article>
             ))}
           </div>
         ) : (
-          <div className="dashboard-empty">
-            <span className="empty-heart">
-              <CalendarDays size={19} />
-            </span>
+          <div className="customer-empty-state">
             <h3>No booking requests yet</h3>
-            <p>Find a vendor you love and send them a note about your day.</p>
+            <p>Explore our wedding marketplace to send your first inquiry.</p>
             <Link href="/services" className="button button-primary">
-              Browse services
+              Explore Services
             </Link>
           </div>
         )}

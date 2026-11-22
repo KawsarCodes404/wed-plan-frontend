@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
 import { AnimatedSection } from "@/components/animated-section"
+import { SiteFooter } from "@/app/components/SiteFooter"
 
 const categories = [
   {
@@ -359,7 +360,7 @@ export default async function HomePage() {
           }}
         >
           <span>
-            <Heart size={16} fill="currentColor" /> here's to the good stuff
+            <Heart size={16} fill="currentColor" /> here&apos;s to the good stuff
           </span>
         </div>
       </AnimatedSection>
@@ -423,44 +424,7 @@ export default async function HomePage() {
           </span>
         </div>
       </AnimatedSection>
-      <footer className="site-footer">
-        <div className="content-wrap footer-main">
-          <Link href="/" className="brand-lockup">
-            <span className="brand-mark">
-              <Heart fill="currentColor" size={18} />
-            </span>
-            <span>
-              <strong>WedPlan</strong>
-              <small>WEDDING MARKETPLACE</small>
-            </span>
-          </Link>
-          <p className="footer-about">
-            A calmer way to find the people who make your celebration yours.
-          </p>
-          <div className="footer-col">
-            <strong>Explore</strong>
-            <Link href="/">Home</Link>
-            <Link href="/services">Browse services</Link>
-            <Link href="/sign-in">Sign in</Link>
-          </div>
-          <div className="footer-col">
-            <strong>For vendors</strong>
-            <Link href="/sign-up">Join WedPlan</Link>
-            <Link href="/sign-in">Vendor sign in</Link>
-          </div>
-          <div className="footer-col">
-            <strong>Say hello</strong>
-            <a href="mailto:hello@wedplan.com">hello@wedplan.com</a>
-            <span>Made with care, for your forever.</span>
-          </div>
-        </div>
-        <div className="content-wrap footer-bottom">
-          <span>© 2026 WedPlan. Made for the moments that matter.</span>
-          <span>
-            Made with <Heart size={13} fill="currentColor" /> for your forever
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

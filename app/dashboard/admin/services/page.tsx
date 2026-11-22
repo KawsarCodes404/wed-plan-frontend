@@ -4,7 +4,7 @@ export default function AdminServicesPage() {
   return (
     <div className="dashboard-page">
       <DashboardTitle
-        title="Service review"
+        title="Manage Services"
         description="Review vendor submissions before they appear in the public marketplace."
       />
       <AdminManager kind="services" />

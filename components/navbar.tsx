@@ -153,7 +153,7 @@ export default function Navbar({
                     {role === "vendor"
                       ? "Vendor"
                       : role === "admin"
-                        ? "Administrator"
+                        ? "Admin"
                         : "Customer"}
                   </small>
                 </span>

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 export function DashboardTitle({
   title,
   description,
@@ -16,14 +18,32 @@ export function DashboardTitle({
 
 export function StatCards({
   items,
+  className = "",
 }: {
-  items: { label: string; value: string | number; tone?: string }[]
+  items: {
+    label: string
+    value: string | number
+    tone?: string
+    iconTone?: string
+    icon?: ReactNode
+  }[]
+  className?: string
 }) {
   return (
-    <div className="dashboard-stat-grid">
+    <div className={`dashboard-stat-grid ${className}`}>
       {items.map((item) => (
-        <article className="dashboard-stat-card" key={item.label}>
+        <article
+          className={`dashboard-stat-card ${item.icon ? "dashboard-stat-card-featured" : ""}`}
+          key={item.label}
+        >
           <span>{item.label}</span>
+          {item.icon && (
+            <span
+              className={`dashboard-stat-icon ${item.iconTone || item.tone || ""}`}
+            >
+              {item.icon}
+            </span>
+          )}
           <strong className={item.tone || ""}>{item.value}</strong>
         </article>
       ))}

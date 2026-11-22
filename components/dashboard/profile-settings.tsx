@@ -19,6 +19,7 @@ export function ProfileSettings() {
         businessName?: string
         location?: string
         bio?: string
+        email?: string
       }
     | undefined
   const [name, setName] = useState("")
@@ -81,25 +82,41 @@ export function ProfileSettings() {
     }
   }
   return (
-    <section className="dashboard-panel">
-      <form className="vendor-service-form" onSubmit={save}>
-        <div className="profile-image-row">
-          <div className="profile-image-preview">
-            {image ? (
-              <img src={image} alt="Profile preview" />
-            ) : (
-              <span>{name.slice(0, 1) || "W"}</span>
-            )}
+    <section className="dashboard-panel profile-settings-panel">
+      <form className="profile-settings-form" onSubmit={save}>
+        <header className="profile-settings-intro">
+          <h2>Profile Settings</h2>
+          <p>
+            Update your personal details and profile photo. Role and
+            subscription status are managed securely by the platform.
+          </p>
+          <span className="profile-role-badge">
+            {user?.role === "admin"
+              ? "Admin"
+              : user?.role === "vendor"
+                ? "Vendor"
+                : "Customer"}
+          </span>
+        </header>
+        <div className="profile-image-card">
+          <div className="profile-image-row">
+            <div className="profile-image-preview">
+              {image ? (
+                <img src={image} alt="Profile preview" />
+              ) : (
+                <span>{name.slice(0, 1) || "W"}</span>
+              )}
+            </div>
+            <label className="profile-file-label">
+              {uploading ? "Uploading photo…" : "Upload profile photo"}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={changeImage}
+              />
+              <small>PNG, JPG, or WebP up to 5 MB</small>
+            </label>
           </div>
-          <label className="profile-file-label">
-            {uploading ? "Uploading photo…" : "Upload profile photo"}
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={changeImage}
-            />
-            <small>PNG, JPG, or WebP up to 5 MB</small>
-          </label>
         </div>
         <div className="vendor-form-grid">
           <label>
@@ -110,6 +127,10 @@ export function ProfileSettings() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+          </label>
+          <label>
+            Email address
+            <input value={user?.email || ""} disabled />
           </label>
           {user?.role === "vendor" && (
             <label>
@@ -131,18 +152,20 @@ export function ProfileSettings() {
               placeholder="City, state, or region"
             />
           </label>
-          {user?.role === "vendor" && (
-            <label className="wide-field">
-              About your business
-              <textarea
-                rows={4}
-                maxLength={500}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="A few words about your work and what couples can expect…"
-              />
-            </label>
-          )}
+          <label className="wide-field">
+            {user?.role === "vendor" ? "About your business" : "Bio / About"}
+            <textarea
+              rows={4}
+              maxLength={500}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder={
+                user?.role === "vendor"
+                  ? "A few words about your work and what couples can expect…"
+                  : "Tell couples or vendors a little about yourself…"
+              }
+            />
+          </label>
         </div>
         {message && <p className="dashboard-notice">{message}</p>}
         {error && (
@@ -151,7 +174,7 @@ export function ProfileSettings() {
           </p>
         )}
         <button
-          className="button button-primary"
+          className="button button-primary profile-save-button"
           disabled={saving || uploading}
         >
           {saving ? "Saving profile…" : "Save profile"}

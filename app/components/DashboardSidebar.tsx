@@ -72,9 +72,9 @@ const menus: Record<string, Item[]> = {
   ],
   admin: [
     { name: "Overview", url: "/dashboard/admin", icon: LayoutDashboard },
-    { name: "Users", url: "/dashboard/admin/users", icon: Users },
+    { name: "Manage Users", url: "/dashboard/admin/users", icon: Users },
     {
-      name: "Service Reviews",
+      name: "Manage Services",
       url: "/dashboard/admin/services",
       icon: ClipboardCheck,
     },
@@ -102,7 +102,12 @@ export function DashboardSidebar() {
         ? "Vendor Portal"
         : "Customer Portal"
   const items = menus[role] || menus.customer
-  const accountName = session?.user?.name || "WedPlan member"
+  const accountName =
+    (role === "vendor"
+      ? (session?.user as { businessName?: string } | undefined)?.businessName
+      : undefined) ||
+    session?.user?.name ||
+    "WedPlan member"
   const isPremium = session?.user?.subscriptionPlan === "Premium"
 
   return (
