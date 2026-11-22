@@ -5864,6 +5864,16 @@ body {
   .account-chip > span:last-child {
     display: none;
   }
+  .account-menu {
+    position: static;
+  }
+  .account-menu-panel {
+    top: calc(100% + 6px);
+    right: 12px;
+    left: auto;
+    width: min(320px, calc(100vw - 24px));
+    transform: none;
+  }
   .mobile-menu-trigger {
     display: inline-grid;
     flex: 0 0 auto;
