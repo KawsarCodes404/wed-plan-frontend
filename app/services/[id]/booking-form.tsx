@@ -6,6 +6,7 @@ import { getApiToken } from "@/lib/api-token"
 import { Check, CircleCheck, MapPin } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
+import { BookingFormSkeleton } from "@/components/dashboard/loading-skeletons"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -73,7 +74,9 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
             View my bookings
           </Link>
         </div>
-      ) : !isPending && session?.user?.role === "vendor" ? (
+      ) : isPending ? (
+        <BookingFormSkeleton />
+      ) : session?.user?.role === "vendor" ? (
         <div className="booking-login-note">
           <p>Vendor accounts can’t send customer booking requests.</p>
         </div>

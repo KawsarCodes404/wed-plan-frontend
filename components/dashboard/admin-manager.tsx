@@ -15,6 +15,7 @@ import {
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
+import { AdminDataSkeleton } from "@/components/dashboard/loading-skeletons"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -62,7 +63,7 @@ export function AdminManager({
 }: {
   kind: "services" | "users" | "transactions"
 }) {
-  const { data: session } = useSession()
+  const { data: session, isPending } = useSession()
   const [rows, setRows] = useState<(Service | User | Transaction)[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -73,6 +74,7 @@ export function AdminManager({
   const [viewingUser, setViewingUser] = useState("")
   const serviceSearch = kind === "services" ? search : ""
   const load = useCallback(async () => {
+    if (isPending) return
     if (!session) {
       setLoading(false)
       return
@@ -103,7 +105,7 @@ export function AdminManager({
     } finally {
       setLoading(false)
     }
-  }, [session, kind, filter, serviceSearch, category])
+  }, [isPending, session, kind, filter, serviceSearch, category])
   useEffect(() => {
     const timeout = window.setTimeout(() => void load(), 0)
     return () => window.clearTimeout(timeout)
@@ -147,9 +149,12 @@ export function AdminManager({
         body: JSON.stringify(body),
       })
       const result = response.status === 204 ? {} : await response.json()
-      if (!response.ok) throw new Error(result.message || "Could not save the change.")
+      if (!response.ok)
+        throw new Error(result.message || "Could not save the change.")
       toast.add({
-        title: result.message || (operation === "delete" ? "Service deleted." : "Change saved."),
+        title:
+          result.message ||
+          (operation === "delete" ? "Service deleted." : "Change saved."),
         type: "success",
       })
       await load()
@@ -259,8 +264,8 @@ export function AdminManager({
           {error}
         </p>
       )}
-      {loading ? (
-        <p className="dashboard-muted">Loading records…</p>
+      {loading || isPending ? (
+        <AdminDataSkeleton kind={kind} />
       ) : !rows.length ? (
         <div className="dashboard-empty">
           <h3>Nothing to review right now</h3>
@@ -286,7 +291,9 @@ export function AdminManager({
                 <div className="admin-service-title-row">
                   <strong>{row.serviceName}</strong>
                   {row.status === "Pending" && (
-                    <span className="service-status-badge pending">Pending</span>
+                    <span className="service-status-badge pending">
+                      Pending
+                    </span>
                   )}
                 </div>
                 {row.status === "Approved" && (
@@ -295,13 +302,17 @@ export function AdminManager({
                   </span>
                 )}
                 {row.status === "Rejected" && (
-                  <span className="service-status-badge rejected">Rejected</span>
+                  <span className="service-status-badge rejected">
+                    Rejected
+                  </span>
                 )}
                 <span className="admin-service-meta">
-                  {row.category} · ${Number(row.price).toLocaleString()} · {row.location}
+                  {row.category} · ${Number(row.price).toLocaleString()} ·{" "}
+                  {row.location}
                 </span>
                 <small>
-                  Vendor: {row.vendor?.businessName || row.vendor?.name || "Vendor"}
+                  Vendor:{" "}
+                  {row.vendor?.businessName || row.vendor?.name || "Vendor"}
                   {row.vendor?.email ? ` (${row.vendor.email})` : ""}
                 </small>
                 {row.description && <p>{row.description}</p>}
@@ -342,10 +353,20 @@ export function AdminManager({
                           aria-checked={row.isActive !== false}
                           aria-label={`${row.isActive === false ? "Activate" : "Pause"} ${row.serviceName}`}
                           disabled={busy === row._id}
-                          onClick={() => void action(row, row.isActive === false ? "activate" : "pause")}
+                          onClick={() =>
+                            void action(
+                              row,
+                              row.isActive === false ? "activate" : "pause"
+                            )
+                          }
                         >
-                          <span>{row.isActive === false ? "Inactive" : "Active"}</span>
-                          <span className="availability-track" aria-hidden="true" />
+                          <span>
+                            {row.isActive === false ? "Inactive" : "Active"}
+                          </span>
+                          <span
+                            className="availability-track"
+                            aria-hidden="true"
+                          />
                         </button>
                       </>
                     )}
@@ -385,92 +406,101 @@ export function AdminManager({
             </thead>
             <tbody>
               {visibleUsers.map((row) => (
-                  <Fragment key={row._id}>
-                    <tr>
-                      <td>
-                        <span className="admin-user-identity">
-                          {row.image ? (
-                            <img src={row.image} alt="" />
-                          ) : (
-                            <span className="admin-user-initials">
-                              {(row.name || row.businessName || "W")
-                                .split(/\s+/)
-                                .map((part) => part[0])
-                                .slice(0, 2)
-                                .join("")
-                                .toUpperCase()}
-                            </span>
-                          )}
-                          <span>
-                            <strong>
-                              {row.name || row.businessName || "WedPlan member"}
-                            </strong>
-                            <small>{row.email}</small>
-                          </span>
-                        </span>
-                      </td>
-                      <td>
-                        <span className="admin-user-role">
-                          {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
-                        </span>
-                      </td>
-                      <td>
-                        {row.role === "vendor" ? (
-                          <span
-                            className={`admin-user-plan ${row.subscriptionPlan === "Premium" ? "premium" : ""}`}
-                          >
-                            {row.subscriptionPlan || "Free"}
-                          </span>
+                <Fragment key={row._id}>
+                  <tr>
+                    <td>
+                      <span className="admin-user-identity">
+                        {row.image ? (
+                          <img src={row.image} alt="" />
                         ) : (
-                          <span className="admin-user-no-plan">—</span>
+                          <span className="admin-user-initials">
+                            {(row.name || row.businessName || "W")
+                              .split(/\s+/)
+                              .map((part) => part[0])
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()}
+                          </span>
                         )}
-                      </td>
-                      <td>
+                        <span>
+                          <strong>
+                            {row.name || row.businessName || "WedPlan member"}
+                          </strong>
+                          <small>{row.email}</small>
+                        </span>
+                      </span>
+                    </td>
+                    <td>
+                      <span className="admin-user-role">
+                        {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
+                      </span>
+                    </td>
+                    <td>
+                      {row.role === "vendor" ? (
                         <span
-                          className={`admin-user-status ${row.isBlocked ? "blocked" : "active"}`}
+                          className={`admin-user-plan ${row.subscriptionPlan === "Premium" ? "premium" : ""}`}
                         >
-                          {row.isBlocked ? "Blocked" : "Active"}
+                          {row.subscriptionPlan || "Free"}
                         </span>
-                      </td>
-                      <td>
-                        <span className="admin-user-actions">
-                          <button
-                            type="button"
-                            className="admin-user-view"
-                            aria-expanded={viewingUser === row._id}
-                            onClick={() =>
-                              setViewingUser((current) =>
-                                current === row._id ? "" : row._id
-                              )
-                            }
-                          >
-                            <Eye size={14} /> View
-                          </button>
-                          <button
-                            type="button"
-                            className={`admin-user-block ${row.isBlocked ? "unblock" : ""}`}
-                            disabled={busy === row._id || row.role === "admin"}
-                            onClick={() =>
-                              void action(row, row.isBlocked ? "unblock" : "block")
-                            }
-                          >
-                            {row.isBlocked ? <Shield size={14} /> : <Ban size={14} />}
-                            {row.isBlocked ? "Unblock" : "Block"}
-                          </button>
+                      ) : (
+                        <span className="admin-user-no-plan">—</span>
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={`admin-user-status ${row.isBlocked ? "blocked" : "active"}`}
+                      >
+                        {row.isBlocked ? "Blocked" : "Active"}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="admin-user-actions">
+                        <button
+                          type="button"
+                          className="admin-user-view"
+                          aria-expanded={viewingUser === row._id}
+                          onClick={() =>
+                            setViewingUser((current) =>
+                              current === row._id ? "" : row._id
+                            )
+                          }
+                        >
+                          <Eye size={14} /> View
+                        </button>
+                        <button
+                          type="button"
+                          className={`admin-user-block ${row.isBlocked ? "unblock" : ""}`}
+                          disabled={busy === row._id || row.role === "admin"}
+                          onClick={() =>
+                            void action(
+                              row,
+                              row.isBlocked ? "unblock" : "block"
+                            )
+                          }
+                        >
+                          {row.isBlocked ? (
+                            <Shield size={14} />
+                          ) : (
+                            <Ban size={14} />
+                          )}
+                          {row.isBlocked ? "Unblock" : "Block"}
+                        </button>
+                      </span>
+                    </td>
+                  </tr>
+                  {viewingUser === row._id && (
+                    <tr className="admin-user-details-row">
+                      <td colSpan={5}>
+                        <strong>Account details</strong>
+                        <span>
+                          {row.businessName || "No business name on file"}
                         </span>
+                        <span>Account ID: {row._id}</span>
                       </td>
                     </tr>
-                    {viewingUser === row._id && (
-                      <tr className="admin-user-details-row">
-                        <td colSpan={5}>
-                          <strong>Account details</strong>
-                          <span>{row.businessName || "No business name on file"}</span>
-                          <span>Account ID: {row._id}</span>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                ))}
+                  )}
+                </Fragment>
+              ))}
               {visibleUsers.length === 0 && (
                 <tr>
                   <td className="admin-users-empty" colSpan={5}>

@@ -5,12 +5,13 @@ import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
 import { toast } from "@/components/ui/toast"
+import { ProfileSettingsSkeleton } from "@/components/dashboard/loading-skeletons"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 ).replace(/\/$/, "")
 export function ProfileSettings() {
-  const { data: session } = useSession()
+  const { data: session, isPending } = useSession()
   const user = session?.user as
     | {
         name?: string
@@ -81,6 +82,8 @@ export function ProfileSettings() {
       setSaving(false)
     }
   }
+  if (isPending) return <ProfileSettingsSkeleton />
+
   return (
     <section className="dashboard-panel profile-settings-panel">
       <form className="profile-settings-form" onSubmit={save}>

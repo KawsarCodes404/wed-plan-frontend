@@ -6,6 +6,7 @@ import { ArrowRight, ImagePlus, MapPin, Pencil, Trash2 } from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
+import { ManagedServicesSkeleton } from "@/components/dashboard/loading-skeletons"
 import { toast } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
 
@@ -33,13 +34,14 @@ type Service = {
 }
 
 export function VendorServicesManager() {
-  const { data: session } = useSession()
+  const { data: session, isPending } = useSession()
   const [rows, setRows] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [notice, setNotice] = useState("")
   const [error, setError] = useState("")
   const [busy, setBusy] = useState("")
   const load = useCallback(async () => {
+    if (isPending) return
     const token = await getApiToken()
     if (!token) {
       setLoading(false)
@@ -56,7 +58,7 @@ export function VendorServicesManager() {
     } finally {
       setLoading(false)
     }
-  }, [session])
+  }, [isPending, session])
   useEffect(() => {
     void load()
   }, [load])
@@ -128,8 +130,8 @@ export function VendorServicesManager() {
           )}
         </div>
       )}
-      {loading ? (
-        <p className="dashboard-muted">Loading your services…</p>
+      {loading || isPending ? (
+        <ManagedServicesSkeleton />
       ) : rows.length === 0 ? (
         <div className="dashboard-empty">
           <h3>Your next great listing starts here</h3>

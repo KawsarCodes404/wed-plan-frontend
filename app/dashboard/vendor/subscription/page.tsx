@@ -6,6 +6,7 @@ import { BadgeCheck, Check, Crown } from "lucide-react"
 import { DashboardTitle } from "@/components/dashboard/dashboard-ui"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
+import { SubscriptionContentSkeleton } from "@/components/dashboard/loading-skeletons"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -32,6 +33,7 @@ export default function VendorSubscriptionPage() {
   const { data: session, isPending } = useSession()
   const [overview, setOverview] = useState<Overview | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
   const role = session?.user as
@@ -42,9 +44,12 @@ export default function VendorSubscriptionPage() {
   useEffect(() => {
     if (isPending) return
     async function loadSubscription() {
-      const token = await getApiToken()
-      if (!token) return
       try {
+        const token = await getApiToken()
+        if (!token) {
+          setLoading(false)
+          return
+        }
         const headers = { Authorization: `Bearer ${token}` }
         const [overviewResponse, transactionsResponse] = await Promise.all([
           fetch(`${apiBase}/vendor/overview`, { headers, cache: "no-store" }),
@@ -66,11 +71,25 @@ export default function VendorSubscriptionPage() {
             ? loadError.message
             : "Unable to load subscription details."
         )
+      } finally {
+        setLoading(false)
       }
     }
 
     void loadSubscription()
   }, [isPending, session])
+
+  if (isPending || loading) {
+    return (
+      <div className="dashboard-page">
+        <DashboardTitle
+          title="Subscription Plans"
+          description="Choose the plan that fits your wedding business. Premium unlocks unlimited services and featured placement."
+        />
+        <SubscriptionContentSkeleton />
+      </div>
+    )
+  }
 
   async function upgrade() {
     setBusy(true)
