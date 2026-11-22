@@ -1792,6 +1792,7 @@ body {
     font-size: 9px;
   }
 }
+
 @media (max-width: 600px) {
   .services-page {
     padding: 43px 0 65px;
@@ -5902,35 +5903,35 @@ body {
   }
   .footer-brand-column,
   .footer-col {
-    justify-items: center;
-    align-items: center;
+    justify-items: start;
+    align-items: flex-start;
     width: 100%;
-    text-align: center;
+    text-align: left;
   }
   .footer-about {
-    margin-inline: auto;
+    margin-inline: 0;
   }
   .footer-contact > a {
-    align-self: center;
+    align-self: flex-start;
     max-width: 100%;
     white-space: normal;
     text-align: left;
   }
   .footer-socials {
-    justify-content: center;
+    justify-content: flex-start;
   }
   .footer-bottom {
-    align-items: center;
+    align-items: flex-start;
     gap: 9px;
-    text-align: center;
+    text-align: left;
   }
   .footer-credit {
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     white-space: normal;
   }
   .footer-bottom span:last-child {
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 
@@ -5977,5 +5978,73 @@ body {
   }
   .checkout-result-actions .button {
     width: 100%;
+  }
+}
+
+/* Keep tablet layouts from squeezing dashboard content into the sidebar. */
+@media (max-width: 850px) {
+  .dashboard-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    width: calc(100% - 40px);
+    margin-top: 22px;
+  }
+
+  .dashboard-layout .dashboard-sidebar-card {
+    position: static;
+    width: 100%;
+  }
+
+  .dashboard-sidebar-card [data-slot="sidebar-menu"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dashboard-layout .dashboard-page {
+    min-height: 0;
+  }
+
+  .admin-service-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-service-filters > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .admin-service-status-filter {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-layout {
+    width: calc(100% - 28px);
+    gap: 16px;
+  }
+
+  .dashboard-sidebar-card [data-slot="sidebar-menu"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-service-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-service-filters > :first-child {
+    grid-column: auto;
+  }
+
+  .admin-users-table-scroll,
+  .admin-transactions-scroll,
+  .subscription-history-scroll {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 390px) {
+  .dashboard-sidebar-card [data-slot="sidebar-menu"] {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
