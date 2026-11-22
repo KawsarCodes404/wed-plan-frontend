@@ -1,0 +1,37 @@
+* [33m682df71[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fixing the view details functionality and configuring and preparing the Project for vercel deployment
+* [33m8df4250[m Now refining my UI/UX Part well
+[31m|[m * [33m08b0bad[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Revise README for WedPlan project details
+[31m|[m[31m/[m  
+* [33m6f7dad8[m Add loading skeletons across data-driven pages
+* [33mb169a04[m now i am thinking how can i add loading fallback to all relevant fetch related or api request calling  pages
+* [33md737ec0[m Fix password visibility toggle
+* [33m4c6d036[m Center dashboard workspace and sidebar card
+* [33mbb7e238[m Match vendor availability switch to reference
+* [33m8c655c9[m Polish vendor service listing controls
+* [33m0f08862[m Guard theme shortcut against missing events
+* [33m1856a1d[m Manage account menu state safely
+* [33m5f17fd6[m Close account menu on outside clicks
+* [33m33ad262[m Verify Stripe checkout before showing success
+* [33ma8ed7df[m Fix auth radio and theme key warnings
+* [33md69c8e6[m Complete auth redirects and dashboard feedback
+* [33mf4043cd[m Add dashboard header and account menu
+* [33m7a48650[m Document WedPlan features and local setup
+* [33m4c1be49[m Show six featured services with motion
+* [33m2b80049[m Use Better Auth JWT for API requests
+* [33mb99667d[m Polish vendor premium checkout experience
+* [33mcfc628d[m Guide vendors to upgrade at the service limit
+* [33m1798ddf[m Match separate WedPlan auth page designs
+* [33m57cc7d7[m Keep services navbar in server layout
+* [33m7fb49f2[m Style keyboard-accessible photo choices
+* [33m52fb90b[m Make service photos selectable
+* [33m15027a8[m Add service-specific share previews
+* [33mbb5e894[m Return a proper 404 for missing services
+* [33md9af5ab[m Add service details loading state
+* [33m2912552[m Add marketplace social metadata
+* [33m5f11dab[m Add service discovery loading state
+* [33me140b6f[m Show live services on the homepage
+* [33mbb1c0cb[m Fix service pagination result grouping
+* [33m4f8b215[m Add paged navigation to service discovery
+* [33m2cba9f3[m Polish role-based access denied screen
+* [33m3410428[m first commit
+* [33mfa8e8e9[m feat: initial commit
