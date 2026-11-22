@@ -15,11 +15,40 @@ import {
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
+import { FilterDropdown } from "@/components/ui/filter-dropdown"
 import { AdminDataSkeleton } from "@/components/dashboard/loading-skeletons"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 ).replace(/\/$/, "")
+
+const roleOptions = [
+  { value: "", label: "All roles" },
+  { value: "vendor", label: "Vendors" },
+  { value: "customer", label: "Customers" },
+  { value: "admin", label: "Admins" },
+]
+const serviceStatusOptions = [
+  { value: "", label: "All statuses" },
+  { value: "Pending", label: "Pending" },
+  { value: "Approved", label: "Approved" },
+  { value: "Rejected", label: "Rejected" },
+]
+const categoryOptions = [
+  { value: "", label: "All categories" },
+  { value: "Photography & Videography", label: "Photography & Videography" },
+  { value: "Wedding Venues", label: "Wedding Venues" },
+  { value: "Decoration & Florist", label: "Decoration & Florist" },
+  { value: "Catering Services", label: "Catering Services" },
+  { value: "Makeup & Styling", label: "Makeup & Styling" },
+  { value: "Wedding Fashion", label: "Wedding Fashion" },
+]
+const serviceQueueOptions = [
+  { value: "", label: "All services" },
+  { value: "Pending", label: "Pending" },
+  { value: "Approved", label: "Approved" },
+  { value: "Rejected", label: "Rejected" },
+]
 type Service = {
   _id: string
   serviceName: string
@@ -190,17 +219,13 @@ export function AdminManager({
             </h2>
           </div>
           {kind === "services" && (
-            <select
-              className="admin-filter"
-              aria-label="Filter service status"
+            <FilterDropdown
+              className="admin-dropdown admin-service-status-filter"
+              label="Filter services by status"
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="">All services</option>
-              <option>Pending</option>
-              <option>Approved</option>
-              <option>Rejected</option>
-            </select>
+              onChange={setFilter}
+              options={serviceQueueOptions}
+            />
           )}
         </div>
       )}
@@ -213,17 +238,13 @@ export function AdminManager({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
-          <select
-            className="admin-filter"
-            aria-label="Filter users by role"
+          <FilterDropdown
+            className="admin-dropdown"
+            label="Filter users by role"
             value={filter}
-            onChange={(event) => setFilter(event.target.value)}
-          >
-            <option value="">All roles</option>
-            <option value="vendor">Vendors</option>
-            <option value="customer">Customers</option>
-            <option value="admin">Admins</option>
-          </select>
+            onChange={setFilter}
+            options={roleOptions}
+          />
         </div>
       )}
       {kind === "services" && (
@@ -234,29 +255,20 @@ export function AdminManager({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
-          <select
-            aria-label="Filter service status"
+          <FilterDropdown
+            className="admin-dropdown"
+            label="Filter service status"
             value={filter}
-            onChange={(event) => setFilter(event.target.value)}
-          >
-            <option value="">All statuses</option>
-            <option>Pending</option>
-            <option>Approved</option>
-            <option>Rejected</option>
-          </select>
-          <select
-            aria-label="Filter service category"
+            onChange={setFilter}
+            options={serviceStatusOptions}
+          />
+          <FilterDropdown
+            className="admin-dropdown"
+            label="Filter service category"
             value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          >
-            <option value="">All categories</option>
-            <option>Photography &amp; Videography</option>
-            <option>Wedding Venues</option>
-            <option>Decoration &amp; Florist</option>
-            <option>Catering Services</option>
-            <option>Makeup &amp; Styling</option>
-            <option>Wedding Fashion</option>
-          </select>
+            onChange={setCategory}
+            options={categoryOptions}
+          />
         </div>
       )}
       {error && (

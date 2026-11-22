@@ -1,5 +1,5 @@
 import { headers } from "next/headers"
-import { auth } from "@/lib/auth"
+import { getAuthSession, getAuthToken } from "@/lib/auth"
 
 const apiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
@@ -7,7 +7,7 @@ const apiBase = (
 
 export async function POST() {
   const requestHeaders = await headers()
-  const session = await auth.api.getSession({ headers: requestHeaders })
+  const session = await getAuthSession(requestHeaders)
 
   if (!session) {
     return Response.json(
@@ -22,7 +22,7 @@ export async function POST() {
     )
   }
 
-  const token = await auth.api.getToken({ headers: requestHeaders })
+  const token = await getAuthToken(requestHeaders)
   if (!token?.token) {
     return Response.json(
       { message: "Your session expired. Sign in again." },

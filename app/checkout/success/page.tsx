@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { SiteNavbar } from "@/components/side-navbar"
 import { CheckoutView } from "../_components/checkout-view"
-import { auth } from "@/lib/auth"
+import { getAuthSession, getAuthToken } from "@/lib/auth"
 import { headers } from "next/headers"
 
 export const metadata: Metadata = { title: "WedPlan Premium checkout" }
@@ -14,7 +14,7 @@ export default async function CheckoutSuccessPage({
 }) {
   const { session_id: sessionId } = await searchParams
   const requestHeaders = await headers()
-  const session = await auth.api.getSession({ headers: requestHeaders })
+  const session = await getAuthSession(requestHeaders)
 
   if (!session) {
     const returnTo = `/checkout/success?session_id=${encodeURIComponent(sessionId || "")}`
@@ -26,7 +26,7 @@ export default async function CheckoutSuccessPage({
 
   let result = null
   if (sessionId) {
-    const token = await auth.api.getToken({ headers: requestHeaders })
+    const token = await getAuthToken(requestHeaders)
     if (token?.token) {
       const apiBase = (
         process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"

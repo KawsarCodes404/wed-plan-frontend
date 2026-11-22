@@ -48,6 +48,8 @@
 }
 
 :root {
+  --page-content-width: 1216px;
+  --page-gutter: 48px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -173,7 +175,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  width: min(1160px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   height: 100%;
   margin: auto;
 }
@@ -377,7 +379,7 @@ body {
   font-size: 14px;
 }
 .content-wrap {
-  width: min(1160px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   margin-inline: auto;
 }
 .hero-section {
@@ -421,7 +423,7 @@ body {
   grid-template-columns: 1.04fr 0.96fr;
   align-items: center;
   gap: 78px;
-  width: min(1160px, 100%);
+  width: min(var(--page-content-width), 100%);
   margin: 0 auto;
   padding: 34px 0 48px;
 }
@@ -658,7 +660,7 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  max-width: 1160px;
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   margin: auto;
   padding: 13px 0 16px;
   color: #bca7a5;
@@ -922,7 +924,7 @@ body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: stretch;
   gap: 32px;
-  width: min(1216px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   margin-inline: auto;
   padding-block: 78px;
 }
@@ -1150,7 +1152,7 @@ body {
   padding: 66px 0 92px;
 }
 .services-page .content-wrap {
-  width: min(1216px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
 }
 .services-intro {
   max-width: 720px;
@@ -1467,7 +1469,7 @@ body {
   display: grid;
   grid-template-columns: 1.1fr 0.95fr 1.05fr 1.25fr;
   gap: 46px;
-  width: min(1216px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   padding-block: 48px 38px;
 }
 .footer-brand-column {
@@ -1563,7 +1565,7 @@ body {
   justify-content: space-between;
   gap: 12px;
   border-top: 1px solid #eee8e3;
-  width: min(1216px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   padding-block: 17px;
   color: #8a817d;
   font-size: 10px;
@@ -1864,7 +1866,7 @@ body {
   padding: 40px 0 90px;
 }
 .service-detail-page .content-wrap {
-  width: min(1120px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
 }
 .back-link {
   display: inline-flex;
@@ -3994,15 +3996,6 @@ body {
   background: #e2f4eb;
   color: #34785d;
 }
-.admin-filter {
-  min-height: 37px;
-  border: 1px solid #e9e2dd;
-  border-radius: 8px;
-  background: #fffefd;
-  padding: 0 10px;
-  color: #554b48;
-  font-size: 11px;
-}
 .admin-record-list {
   display: grid;
 }
@@ -4064,6 +4057,8 @@ body {
   font-size: 10px;
 }
 .admin-service-filters {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 190px 220px;
   gap: 10px;
@@ -4079,6 +4074,8 @@ body {
   border-radius: 10px;
 }
 .admin-user-toolbar {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 180px;
   gap: 10px;
@@ -4109,10 +4106,26 @@ body {
   font-size: 12px;
 }
 .admin-user-toolbar input:focus,
-.admin-user-toolbar select:focus {
+.admin-service-filters input:focus {
   border-color: #a54a5c;
   outline: 0;
   box-shadow: 0 0 0 3px #a54a5c20;
+}
+.admin-dropdown {
+  width: 100%;
+  min-width: 0;
+}
+.admin-dropdown .filter-dropdown-trigger {
+  height: 39px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+.admin-dropdown .filter-dropdown-menu {
+  width: max(100%, 220px);
+}
+.admin-service-status-filter {
+  flex: 0 0 180px;
+  z-index: 3;
 }
 .admin-users-table-scroll {
   overflow-x: auto;
@@ -4326,8 +4339,7 @@ body {
   background: #fbe8e7;
   color: #a43e3b;
 }
-.admin-service-filters input,
-.admin-service-filters select {
+.admin-service-filters input {
   width: 100%;
   min-width: 0;
   height: 39px;
@@ -4947,7 +4959,7 @@ body {
   grid-template-columns: 236px minmax(0, 1fr);
   align-items: start;
   gap: 28px;
-  width: min(1160px, calc(100% - 48px));
+  width: min(var(--page-content-width), calc(100% - var(--page-gutter)));
   min-height: calc(100vh - 74px);
   margin: 28px auto 0;
   padding-bottom: 40px;
