@@ -4,7 +4,7 @@ export default function VendorBookingsPage() {
   return (
     <div className="dashboard-page">
       <DashboardTitle
-        title="Booking requests"
+        title="Booking Requests"
         description="Review incoming wedding inquiries from couples. Pending requests can be accepted or declined once."
       />
       <BookingManager role="vendor" />

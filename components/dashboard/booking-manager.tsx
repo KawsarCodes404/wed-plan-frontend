@@ -1,7 +1,15 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { CalendarDays, Eye, MapPin } from "lucide-react"
+import {
+  CalendarDays,
+  Check,
+  Eye,
+  Mail,
+  MapPin,
+  UserRound,
+  X,
+} from "lucide-react"
 import { getApiToken } from "@/lib/api-token"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
@@ -103,17 +111,11 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
   return (
     <section
       className={
-        role === "customer" ? "customer-bookings-manager" : "dashboard-panel"
+        role === "customer"
+          ? "customer-bookings-manager"
+          : "vendor-bookings-manager"
       }
     >
-      {role === "vendor" && (
-        <div className="dashboard-panel-heading">
-          <div>
-            <span className="eyebrow">COUPLE INQUIRIES</span>
-            <h2>Booking requests</h2>
-          </div>
-        </div>
-      )}
       {error && (
         <p role="alert" className="dashboard-error">
           {error}
@@ -212,54 +214,66 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
               </article>
             ) : (
               <article className="request-card" key={row._id}>
-                <div className="request-card-top">
-                  <div>
+                <div className="request-card-heading">
+                  <div className="request-card-title-group">
                     <h3>{row.service?.serviceName || "Wedding service"}</h3>
-                    <span>
-                      {role === "vendor"
-                        ? `${row.customer?.name || "Couple"} · ${row.customer?.email || ""}`
-                        : `${row.vendor?.businessName || row.vendor?.name || "Wedding vendor"}`}
+                    <span
+                      className={`status-chip status-${row.status.toLowerCase()}`}
+                    >
+                      {row.status}
                     </span>
+                    {row.service?.price !== undefined && (
+                      <span className="request-price">
+                        ${Number(row.service.price).toLocaleString()}
+                      </span>
+                    )}
                   </div>
-                  <span
-                    className={`status-chip status-${row.status.toLowerCase()}`}
-                  >
-                    {row.status}
-                  </span>
+                  {role === "vendor" && row.status === "Pending" && (
+                    <div className="request-actions">
+                      <button
+                        disabled={busy === row._id}
+                        className="button request-accept-button"
+                        onClick={() => void update(row, "Accepted")}
+                      >
+                        <Check size={15} />
+                        {busy === row._id ? "Saving…" : "Accept"}
+                      </button>
+                      <button
+                        disabled={busy === row._id}
+                        className="button request-reject-button"
+                        onClick={() => void update(row, "Rejected")}
+                      >
+                        <X size={15} />
+                        Reject
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="request-details">
                   <span>
+                    <UserRound size={14} />
+                    {row.customer?.name || "Couple"}
+                  </span>
+                  {row.customer?.email && (
+                    <span>
+                      <Mail size={14} />
+                      {row.customer.email}
+                    </span>
+                  )}
+                  <span>
                     <CalendarDays size={14} />
-                    {row.eventDate}
+                    Event Date: {formatBookingDate(row.eventDate)}
                   </span>
                   <span>
                     <MapPin size={14} />
                     {row.eventLocation}
                   </span>
-                  {row.service?.price !== undefined && (
-                    <span>${Number(row.service.price).toLocaleString()}</span>
-                  )}
                 </div>
                 {row.message && (
-                  <p className="request-message">“{row.message}”</p>
-                )}
-                {role === "vendor" && row.status === "Pending" && (
-                  <div className="request-actions">
-                    <button
-                      disabled={busy === row._id}
-                      className="button button-primary"
-                      onClick={() => void update(row, "Accepted")}
-                    >
-                      Accept request
-                    </button>
-                    <button
-                      disabled={busy === row._id}
-                      className="button button-outline"
-                      onClick={() => void update(row, "Rejected")}
-                    >
-                      Decline
-                    </button>
-                  </div>
+                  <p className="request-message">
+                    <strong>Couple&apos;s Note:</strong>
+                    <span>{row.message}</span>
+                  </p>
                 )}
               </article>
             )

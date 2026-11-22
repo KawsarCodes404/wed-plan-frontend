@@ -1,7 +1,6 @@
 import Link from "next/link"
 import {
   CalendarDays,
-  Eye,
   CircleCheck,
   CircleX,
   Clock3,
@@ -102,63 +101,26 @@ export default async function CustomerOverviewPage() {
                 className="customer-recent-booking-card"
                 key={booking._id}
               >
-                <div className="customer-recent-booking-thumb">
-                  {booking.service?.images?.[0] || booking.service?.image ? (
-                    <img
-                      src={
-                        booking.service?.images?.[0] ||
-                        booking.service?.image ||
-                        ""
-                      }
-                      alt=""
-                    />
-                  ) : (
-                    <CalendarDays size={21} />
-                  )}
-                </div>
                 <div className="customer-recent-booking-content">
                   <div className="customer-recent-booking-title-row">
-                    <h3>
-                      {booking.service?.serviceName || "Wedding service"}
-                    </h3>
-                    <span
-                      className={`status-chip status-${booking.status.toLowerCase()}`}
-                    >
-                      {booking.status}
-                    </span>
+                    <h3>{booking.service?.serviceName || "Wedding service"}</h3>
                   </div>
-                  <p className="customer-recent-booking-vendor">
-                    {booking.vendor?.businessName ||
-                      booking.vendor?.name ||
-                      "Wedding vendor"}
-                    {booking.service?.price !== undefined && (
-                      <strong>
-                        ${Number(booking.service.price).toLocaleString()}
-                      </strong>
-                    )}
-                  </p>
                   <div className="customer-recent-booking-meta">
                     <span>
                       <CalendarDays size={14} />
-                      Event {formatBookingDate(booking.eventDate)}
+                      Event Date: {formatBookingDate(booking.eventDate)}
                     </span>
                     <span>
                       <MapPin size={14} />
                       {booking.eventLocation}
                     </span>
-                    {booking.createdAt && (
-                      <span className="customer-recent-booking-requested">
-                        Requested {formatBookingDate(booking.createdAt)}
-                      </span>
-                    )}
                   </div>
                 </div>
-                <Link
-                  className="customer-recent-booking-details"
-                  href="/dashboard/customer/bookings"
+                <span
+                  className={`status-chip status-${booking.status.toLowerCase()}`}
                 >
-                  <Eye size={14} /> Details
-                </Link>
+                  {booking.status}
+                </span>
               </article>
             ))}
           </div>

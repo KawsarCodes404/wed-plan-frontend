@@ -1,14 +1,18 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import {
   BadgeCheck,
+  Check,
+  ChevronDown,
   MapPin,
   Search,
   SlidersHorizontal,
   Sparkles,
+  type LucideIcon,
 } from "lucide-react"
+import { RevealGrid } from "@/components/reveal-grid"
 
 const categories = [
   "Photography & Videography",
@@ -44,6 +48,86 @@ type Result = {
   page: number
 }
 
+type FilterOption = {
+  value: string
+  label: string
+}
+
+function FilterDropdown({
+  label,
+  value,
+  options,
+  onChange,
+  icon: Icon,
+  className = "",
+}: {
+  label: string
+  value: string
+  options: FilterOption[]
+  onChange: (value: string) => void
+  icon?: LucideIcon
+  className?: string
+}) {
+  const dropdownRef = useRef<HTMLDetailsElement>(null)
+  const selectedOption = options.find((option) => option.value === value)
+
+  useEffect(() => {
+    function closeOnOutsideClick(event: MouseEvent) {
+      if (
+        event.target instanceof Node &&
+        !dropdownRef.current?.contains(event.target)
+      ) {
+        if (dropdownRef.current) dropdownRef.current.open = false
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape" && dropdownRef.current?.open) {
+        dropdownRef.current.open = false
+        dropdownRef.current.querySelector("summary")?.focus()
+      }
+    }
+
+    document.addEventListener("mousedown", closeOnOutsideClick)
+    document.addEventListener("keydown", closeOnEscape)
+
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick)
+      document.removeEventListener("keydown", closeOnEscape)
+    }
+  }, [])
+
+  return (
+    <details className={`filter-dropdown ${className}`} ref={dropdownRef}>
+      <summary className="filter-dropdown-trigger" aria-label={label}>
+        {Icon && <Icon size={16} aria-hidden="true" />}
+        <span>{selectedOption?.label}</span>
+        <ChevronDown className="filter-dropdown-chevron" size={15} />
+      </summary>
+      <div className="filter-dropdown-menu" role="listbox" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            className="filter-dropdown-option"
+            type="button"
+            role="option"
+            aria-selected={value === option.value}
+            onClick={() => {
+              onChange(option.value)
+              if (dropdownRef.current) dropdownRef.current.open = false
+            }}
+          >
+            <span className="filter-dropdown-option-check">
+              {value === option.value && <Check size={14} />}
+            </span>
+            <span>{option.label}</span>
+          </button>
+        ))}
+      </div>
+    </details>
+  )
+}
+
 function ServiceTile({ service }: { service: Service }) {
   return (
     <article className="service-card">
@@ -56,7 +140,7 @@ function ServiceTile({ service }: { service: Service }) {
         <span className="category-pill">{service.category}</span>
         {service.vendor?.isPremium && (
           <span className="partner-pill">
-            <Sparkles size={13} /> Premium Vendor
+            <Sparkles size={13} /> Featured Partner
           </span>
         )}
         <span className="price-pill">
@@ -188,10 +272,11 @@ export default function ServicesPage() {
             <span className="eyebrow">
               <Sparkles size={13} /> CURATED WEDDING MARKETPLACE
             </span>
-            <h1>Browse wedding services</h1>
+            <h1>Browse Wedding Services</h1>
             <p>
-              Meet trusted photographers, dream venues, florists, caterers, and
-              stylists. Thoughtfully chosen for the day you have in mind.
+              Search verified photographers, dream venues, florists, caterers,
+              and stylists. Sign in to view full galleries and send booking
+              requests.
             </p>
           </div>
           <form
@@ -210,16 +295,16 @@ export default function ServicesPage() {
                 aria-label="Search services"
               />
             </label>
-            <select
+            <FilterDropdown
+              className="filter-category-dropdown"
+              label="Filter by category"
               value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              aria-label="Filter by category"
-            >
-              <option value="">All categories</option>
-              {categories.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
+              onChange={setCategory}
+              options={[
+                { value: "", label: "All Categories" },
+                ...categories.map((item) => ({ value: item, label: item })),
+              ]}
+            />
             <label className="filter-search location-filter">
               <MapPin size={17} />
               <input
@@ -229,18 +314,18 @@ export default function ServicesPage() {
                 aria-label="Filter by location"
               />
             </label>
-            <label className="filter-sort">
-              <SlidersHorizontal size={16} />
-              <select
-                value={sort}
-                onChange={(event) => setSort(event.target.value)}
-                aria-label="Sort services"
-              >
-                <option value="newest">Featured & Newest</option>
-                <option value="priceAsc">Price: Low to High</option>
-                <option value="priceDesc">Price: High to Low</option>
-              </select>
-            </label>
+            <FilterDropdown
+              className="filter-sort-dropdown"
+              label="Sort services"
+              value={sort}
+              onChange={setSort}
+              icon={SlidersHorizontal}
+              options={[
+                { value: "newest", label: "Featured & Newest" },
+                { value: "priceAsc", label: "Price: Low to High" },
+                { value: "priceDesc", label: "Price: High to Low" },
+              ]}
+            />
             <button
               className="button button-primary filter-submit"
               type="submit"
@@ -274,11 +359,11 @@ export default function ServicesPage() {
             </div>
           ) : services.length ? (
             <>
-              <div className="service-grid">
+              <RevealGrid className="service-grid">
                 {services.map((service) => (
                   <ServiceTile key={service._id} service={service} />
                 ))}
-              </div>
+              </RevealGrid>
               {pageCount > 1 && (
                 <nav className="service-pagination" aria-label="Service pages">
                   <button

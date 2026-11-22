@@ -98,13 +98,28 @@ function BookingRowsSkeleton({ role }: { role: "customer" | "vendor" }) {
           }
           key={index}
         >
-          <SkeletonBlock className="dashboard-booking-skeleton-image" />
-          <div className="dashboard-booking-skeleton-copy">
-            <SkeletonBlock className="dashboard-skeleton-row-title" />
-            <SkeletonBlock className="dashboard-skeleton-row-detail" />
-            <SkeletonBlock className="dashboard-skeleton-row-detail short" />
-          </div>
-          <SkeletonBlock className="dashboard-skeleton-pill" />
+          {role === "customer" ? (
+            <>
+              <SkeletonBlock className="dashboard-booking-skeleton-image" />
+              <div className="dashboard-booking-skeleton-copy">
+                <SkeletonBlock className="dashboard-skeleton-row-title" />
+                <SkeletonBlock className="dashboard-skeleton-row-detail" />
+                <SkeletonBlock className="dashboard-skeleton-row-detail short" />
+              </div>
+              <SkeletonBlock className="dashboard-skeleton-pill" />
+            </>
+          ) : (
+            <>
+              <div className="dashboard-request-skeleton-heading">
+                <SkeletonBlock className="dashboard-skeleton-row-title" />
+                <SkeletonBlock className="dashboard-skeleton-pill" />
+                <SkeletonBlock className="dashboard-skeleton-pill" />
+                <SkeletonBlock className="dashboard-skeleton-action" />
+              </div>
+              <SkeletonBlock className="dashboard-request-skeleton-details" />
+              <SkeletonBlock className="dashboard-request-skeleton-note" />
+            </>
+          )}
         </article>
       ))}
     </div>
@@ -243,12 +258,15 @@ export function DashboardRouteSkeleton({
           </section>
         </>
       )}
-      {variant === "bookings" && (
-        <section className="dashboard-panel dashboard-skeleton-list-panel">
-          <SkeletonBlock className="dashboard-skeleton-panel-title" />
+      {variant === "bookings" &&
+        (role === "vendor" ? (
           <BookingRowsSkeleton role={role} />
-        </section>
-      )}
+        ) : (
+          <section className="dashboard-panel dashboard-skeleton-list-panel">
+            <SkeletonBlock className="dashboard-skeleton-panel-title" />
+            <BookingRowsSkeleton role={role} />
+          </section>
+        ))}
       {variant === "services" && (
         <section className="dashboard-panel dashboard-skeleton-list-panel">
           <SkeletonBlock className="dashboard-skeleton-panel-title" />

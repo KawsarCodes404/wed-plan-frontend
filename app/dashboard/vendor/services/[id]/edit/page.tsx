@@ -33,7 +33,7 @@ export default async function EditVendorServicePage({
         title="Edit a wedding service"
         description="Update your package details. Changes go through admin review again."
       />
-      <section className="dashboard-panel">
+      <section className="dashboard-panel vendor-service-form-panel">
         <VendorServiceForm service={service} />
       </section>
     </div>

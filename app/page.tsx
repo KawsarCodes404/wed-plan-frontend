@@ -3,55 +3,53 @@ import {
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
-  Camera,
-  Check,
-  Flower2,
+  CheckCircle2,
+  Crown,
   Heart,
   MapPin,
+  Quote,
   Sparkles,
-  Utensils,
-  Shirt,
-  Building2,
 } from "lucide-react"
 import { SiteNavbar } from "@/components/side-navbar"
 import { AnimatedSection } from "@/components/animated-section"
 import { SiteFooter } from "@/app/components/SiteFooter"
+import { RevealGrid } from "@/components/reveal-grid"
 
 const categories = [
   {
     title: "Photography & Videography",
-    detail: "Timeless stories, honestly told",
-    icon: Camera,
+    kicker: "Cinematic Capture",
+    detail: "Timeless editorial stories, drone films, and candid moments",
     image: "photo-1537633552985-df8429e8048b",
   },
   {
     title: "Wedding Venues",
-    detail: "Spaces made for your day",
-    icon: Building2,
+    kicker: "Curated Spaces",
+    detail: "Historic estates, garden conservatories, and grand ballrooms",
     image: "photo-1519167758481-83f550bb49b3",
   },
   {
     title: "Decoration & Florist",
-    detail: "The finishing touches",
-    icon: Flower2,
+    kicker: "Botanical Artistry",
+    detail: "Floral arches, candlelit tablescapes, and thoughtful details",
     image: "photo-1490750967868-88aa4486c946",
   },
   {
     title: "Catering Services",
-    detail: "A table worth gathering around",
-    icon: Utensils,
+    kicker: "Gather Around",
+    detail: "Seasonal menus and beautiful feasts made for sharing",
     image: "photo-1511795409834-ef04bbd61622",
   },
   {
     title: "Makeup & Styling",
-    detail: "Feel like the best you",
-    icon: Sparkles,
+    kicker: "The Finishing Touch",
+    detail: "Beauty and styling that feels unmistakably like you",
     image: "photo-1522335789203-aabd1fc54bc9",
   },
   {
     title: "Wedding Fashion",
-    detail: "Find the one you love",
-    icon: Shirt,
+    kicker: "Made for the Moment",
+    detail: "The looks, tailoring, and finishing touches for your day",
     image: "photo-1594552072238-b8a33785b261",
   },
 ]
@@ -256,11 +254,11 @@ export default async function HomePage() {
           </Link>
         </div>
         {featured.length ? (
-          <div className="service-grid">
+          <RevealGrid className="service-grid">
             {featured.map((service) => (
               <ServiceCard key={service._id} service={service} />
             ))}
-          </div>
+          </RevealGrid>
         ) : (
           <p className="empty-state">
             New wedding services are coming soon. Browse all services to explore
@@ -276,8 +274,8 @@ export default async function HomePage() {
             title="Wedding service categories"
             description="Find the right kind of wonderful for every chapter of your wedding weekend."
           />
-          <div className="category-grid">
-            {categories.map(({ title, detail, icon: Icon, image }) => (
+          <RevealGrid className="category-grid">
+            {categories.map(({ title, kicker, detail, image }) => (
               <Link
                 href={`/services?category=${encodeURIComponent(title)}`}
                 className="category-card"
@@ -286,97 +284,125 @@ export default async function HomePage() {
                   backgroundImage: `linear-gradient(0deg,rgba(31,18,21,.74),rgba(31,18,21,.08) 76%),url(${imageUrl(image, 700)})`,
                 }}
               >
-                <span className="category-icon">
-                  <Icon size={17} />
-                </span>
+                <span className="category-kicker">{kicker}</span>
                 <span className="category-text">
                   <strong>{title}</strong>
                   <small>{detail}</small>
                 </span>
-                <ArrowUpRight className="category-arrow" size={19} />
               </Link>
             ))}
-          </div>
+          </RevealGrid>
         </div>
       </AnimatedSection>
 
       <AnimatedSection className="promise-section content-wrap">
-        <div className="promise-copy">
-          <span className="eyebrow">THE WEDPLAN PROMISE</span>
-          <h2>
-            Good planning
-            <br />
-            makes room for <em>good memories.</em>
-          </h2>
-          <p>
-            Less spreadsheet juggling. More feeling excited. WedPlan brings the
-            details and the people you trust into one calm, clear place.
-          </p>
-          <Link href="/services" className="button button-primary">
-            Find your people <ArrowRight size={16} />
-          </Link>
-        </div>
-        <div className="promise-list">
-          <div>
-            <span>
-              <Check size={18} />
-            </span>
-            <section>
-              <strong>Thoughtfully vetted</strong>
-              <p>
-                Every service is reviewed by our team before couples can find
-                it.
-              </p>
-            </section>
+        <div className="promise-benefits">
+          <div className="promise-intro">
+            <span className="eyebrow">THE WEDPLAN PROMISE</span>
+            <h2>Why Choose WedPlan?</h2>
+            <p>
+              Designed for modern couples and ambitious wedding vendors alike,
+              WedPlan replaces scattered spreadsheets with verified partnerships
+              and streamlined booking workflows.
+            </p>
           </div>
-          <div>
-            <span>
-              <Check size={18} />
-            </span>
-            <section>
-              <strong>Clear from the start</strong>
+          <div className="promise-feature-grid">
+            <article className="promise-feature-card">
+              <CheckCircle2 size={20} />
+              <strong>Curated &amp; Admin-Vetted Vendors</strong>
               <p>
-                Compare starting prices, locations, and service details upfront.
+                Every wedding service undergoes administrative review before
+                appearing publicly, ensuring trusted professionals for your
+                celebration.
               </p>
-            </section>
-          </div>
-          <div>
-            <span>
-              <Check size={18} />
-            </span>
-            <section>
-              <strong>Your plans, in one place</strong>
+            </article>
+            <article className="promise-feature-card">
+              <CheckCircle2 size={20} />
+              <strong>Transparent Pricing &amp; Instant Requests</strong>
               <p>
-                Send a request and follow every update right from your
-                dashboard.
+                Compare package rates upfront, filter by your city or
+                destination, and submit date-specific booking requests in
+                seconds.
               </p>
-            </section>
+            </article>
+            <article className="promise-feature-card">
+              <CheckCircle2 size={20} />
+              <strong>Dedicated Role Dashboards</strong>
+              <p>
+                Couples track every request status in real time while vendors
+                manage packages, schedules, and bookings from one workspace.
+              </p>
+            </article>
+            <article className="promise-feature-card">
+              <CheckCircle2 size={20} />
+              <strong>Verified Premium Vendor Badges</strong>
+              <p>
+                Spot top-tier wedding partners backed by Stripe-verified Premium
+                memberships and priority service showcases.
+              </p>
+            </article>
           </div>
         </div>
-        <div
-          className="promise-photo"
-          style={{
-            backgroundImage: `url(${imageUrl("photo-1529636798458-92182e662485", 1100)})`,
-          }}
-        >
-          <span>
-            <Heart size={16} fill="currentColor" /> here&apos;s to the good stuff
+
+        <aside className="promise-premium-panel">
+          <span className="promise-premium-label">
+            <Crown size={14} /> For Wedding Businesses
           </span>
-        </div>
+          <h3>Grow Your Studio With WedPlan Premium</h3>
+          <p className="promise-premium-description">
+            Start free with up to 3 active services, or unlock unlimited
+            listings, a verified Premium Vendor badge, and top-of-feed placement
+            powered by Stripe Checkout.
+          </p>
+          <ol className="promise-steps">
+            <li>
+              <span>01</span>
+              <div>
+                <strong>Discover Curated Services</strong>
+                <p>
+                  Explore approved photography, venues, florists, catering,
+                  beauty, and couture filtered by location and budget.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <strong>Send a Booking Request</strong>
+                <p>
+                  Pick your wedding date and venue location, add personal notes,
+                  and send a direct inquiry to your chosen vendor.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <strong>Track &amp; Celebrate</strong>
+                <p>
+                  Receive prompt acceptances from vendors and keep all confirmed
+                  wedding services organized inside your dashboard.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </aside>
       </AnimatedSection>
 
       <AnimatedSection className="testimonial-section">
         <div className="content-wrap">
           <SectionHeading
             eyebrow="LOVE NOTES"
-            title="Stories from happy couples"
+            title="Stories From Happy Couples"
           />
-          <div className="testimonial-grid">
+          <RevealGrid className="testimonial-grid">
             <blockquote>
-              <span>“</span>
+              <Quote aria-hidden="true" />
               <p>
-                WedPlan helped us find our dream garden estate, floral designer,
-                and photographer without losing our weekends to research.
+                “WedPlan helped us find our dream garden estate, floral
+                designer, and editorial photographer in a single weekend.
+                Tracking every booking status in one place removed all the
+                stress.”
               </p>
               <footer>
                 <strong>Sophia & Liam Harrison</strong>
@@ -384,10 +410,11 @@ export default async function HomePage() {
               </footer>
             </blockquote>
             <blockquote>
-              <span>“</span>
+              <Quote aria-hidden="true" />
               <p>
-                We could compare vendors and pricing in one place. The whole
-                process felt thoughtful, clear, and surprisingly fun.
+                “Being able to filter vendors by location and compare pricing
+                transparently saved us weeks of back-and-forth emails. Every
+                vendor we booked was responsive and extraordinary.”
               </p>
               <footer>
                 <strong>Amara & Daniel Vance</strong>
@@ -395,35 +422,21 @@ export default async function HomePage() {
               </footer>
             </blockquote>
             <blockquote>
-              <span>“</span>
+              <Quote aria-hidden="true" />
               <p>
-                From the first request to the final details, WedPlan made it
-                easy to find people who understood our vision.
+                “From bridal styling to multi-course catering, WedPlan connected
+                us with verified artisans who understood our vision from day
+                one.”
               </p>
               <footer>
                 <strong>Clara & Ethan Brooks</strong>
                 <small>Charleston, SC · Married August 2026</small>
               </footer>
             </blockquote>
-          </div>
+          </RevealGrid>
         </div>
       </AnimatedSection>
 
-      <AnimatedSection className="closing-cta">
-        <div className="closing-inner">
-          <span className="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
-          <h2>
-            Let’s make this feel like <em>you.</em>
-          </h2>
-          <p>The right people make all the difference. Let’s find yours.</p>
-          <Link href="/services" className="button button-gold">
-            Browse wedding services <ArrowRight size={16} />
-          </Link>
-          <span className="closing-heart">
-            <Heart size={32} strokeWidth={1} />
-          </span>
-        </div>
-      </AnimatedSection>
       <SiteFooter />
     </main>
   )

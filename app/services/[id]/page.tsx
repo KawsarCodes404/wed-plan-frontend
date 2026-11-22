@@ -103,14 +103,14 @@ export default async function ServiceDetailsPage({
                     {service.location}
                   </p>
                   <div className="starting-price">
-                    <small>Starting package</small>
+                    <small>Starting Package</small>
                     <strong>${Number(service.price).toLocaleString()}</strong>
                   </div>
                   <hr />
-                  <h2>About this service</h2>
+                  <h2>About This Service</h2>
                   <p className="detail-description">{service.description}</p>
                   <hr />
-                  <h2>Vendor information</h2>
+                  <h2>Vendor Information</h2>
                   <div className="vendor-profile">
                     {service.vendor?.image ? (
                       <img src={service.vendor.image} alt="" />

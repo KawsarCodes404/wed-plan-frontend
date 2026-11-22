@@ -8,11 +8,13 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Crown,
   Settings,
   UserRound,
 } from "lucide-react"
 import { useSession, signOut } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
+import { useVendorPlan } from "@/lib/use-vendor-plan"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -60,6 +62,7 @@ export default function Navbar({
   const { data, isPending } = useSession()
   const session = isPending ? initialSession : data
   const role = session?.user?.role
+  const plan = useVendorPlan(role === "vendor", session?.user?.subscriptionPlan)
   const dashboardHref =
     role === "admin"
       ? "/dashboard/admin"
@@ -150,11 +153,20 @@ export default function Navbar({
                 <span>
                   <strong>{session.user.name || "Your account"}</strong>
                   <small>
-                    {role === "vendor"
-                      ? "Vendor"
-                      : role === "admin"
-                        ? "Admin"
-                        : "Customer"}
+                    {role === "vendor" ? (
+                      <>
+                        Vendor
+                        {plan === "Premium" && (
+                          <span className="account-chip-premium">
+                            · <Crown size={10} /> Premium
+                          </span>
+                        )}
+                      </>
+                    ) : role === "admin" ? (
+                      "Admin"
+                    ) : (
+                      "Customer"
+                    )}
                   </small>
                 </span>
               </summary>
@@ -170,10 +182,11 @@ export default function Navbar({
                           ? "Vendor"
                           : "Customer"}
                     </span>
-                    {role === "vendor" &&
-                      session.user.subscriptionPlan === "Premium" && (
-                        <span className="premium-role-badge">♛ Premium</span>
-                      )}
+                    {role === "vendor" && plan === "Premium" && (
+                      <span className="premium-role-badge">
+                        <Crown size={12} /> Premium
+                      </span>
+                    )}
                   </span>
                 </div>
                 <Link href={dashboardHref} className="account-menu-link">

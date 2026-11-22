@@ -290,6 +290,13 @@ export function VendorServiceForm({ service }: { service?: Service }) {
   }
   return (
     <form className="vendor-service-form" onSubmit={submit}>
+      <div className="vendor-service-form-heading">
+        <h2>Service Details</h2>
+        <p>
+          Provide clear pricing, location coverage, and high-resolution
+          photographs.
+        </p>
+      </div>
       <div className="vendor-form-grid">
         <label>
           Service name
@@ -347,26 +354,48 @@ export function VendorServiceForm({ service }: { service?: Service }) {
         </label>
       </div>
       <div className="vendor-upload">
-        <label>
-          Service images{" "}
-          <small>(up to 6 images; first image is the cover)</small>
+        <label className="vendor-upload-label" htmlFor="service-images">
+          Service Images <small>(Up to 6 files, uploaded to ImgBB)</small>
+        </label>
+        <div className="vendor-upload-dropzone">
           <input
+            id="service-images"
+            className="vendor-upload-input"
             type="file"
             accept="image/png,image/jpeg,image/webp"
             multiple
+            disabled={uploading || images.length >= 6}
             onChange={selectImages}
           />
-        </label>
+          <label
+            className="button button-outline vendor-upload-button"
+            htmlFor="service-images"
+          >
+            <ImagePlus size={15} /> Select Image Files
+          </label>
+          <p>
+            PNG, JPG, or WebP up to 5 MB each. First image is used as the cover.
+          </p>
+          {uploading && (
+            <span className="vendor-upload-progress">Uploading images…</span>
+          )}
+        </div>
         <div className="upload-previews">
           {images.map((src, index) => (
-            <div key={src} style={{ backgroundImage: `url(${src})` }}>
+            <div
+              key={`${src}-${index}`}
+              style={{ backgroundImage: `url(${src})` }}
+            >
               <button
                 type="button"
-                aria-label="Remove image"
-                onClick={() => setImages(images.filter((_, i) => i !== index))}
+                aria-label={`Remove image ${index + 1}`}
+                onClick={() =>
+                  setImages((current) => current.filter((_, i) => i !== index))
+                }
               >
                 ×
               </button>
+              {index === 0 && <span className="vendor-cover-badge">Cover</span>}
             </div>
           ))}
         </div>
@@ -384,12 +413,17 @@ export function VendorServiceForm({ service }: { service?: Service }) {
           )}
         </div>
       )}
-      <button className="button button-primary" disabled={saving || uploading}>
+      <button
+        className="button button-primary vendor-publish-button"
+        disabled={saving || uploading}
+      >
         {uploading
           ? "Uploading images…"
           : saving
             ? "Submitting…"
-            : "Publish service for review"}
+            : service
+              ? "Save Service Changes"
+              : "Publish Service for Review"}
       </button>
     </form>
   )

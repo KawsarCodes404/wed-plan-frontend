@@ -13,8 +13,9 @@ type CheckoutResult = {
 export function CheckoutView({ result }: { result: CheckoutResult | null }) {
   const complete = result?.status === "Completed"
   const cancelled = result?.status === "Cancelled"
+  const plan = result?.plan || "Premium"
   const title = complete
-    ? "Welcome to WedPlan Premium!"
+    ? `Welcome to WedPlan ${plan}!`
     : cancelled
       ? "Checkout canceled"
       : result?.status === "Failed"
@@ -28,7 +29,6 @@ export function CheckoutView({ result }: { result: CheckoutResult | null }) {
       >
         {complete ? <BadgeCheck size={31} /> : <CircleX size={31} />}
       </span>
-      <span className="eyebrow">WEDPLAN PREMIUM</span>
       <h1>{title}</h1>
       <p>
         {complete
@@ -43,7 +43,7 @@ export function CheckoutView({ result }: { result: CheckoutResult | null }) {
             <dt>Plan</dt>
             <dd>
               <span className="checkout-plan-label">
-                <Crown size={13} /> Premium
+                <Crown size={13} /> {plan}
               </span>
             </dd>
           </div>
@@ -61,8 +61,10 @@ export function CheckoutView({ result }: { result: CheckoutResult | null }) {
           <div>
             <dt>Transaction Status</dt>
             <dd>
-              <span className="transaction-status status-completed">
-                Completed
+              <span
+                className={`transaction-status status-${result.status.toLowerCase()}`}
+              >
+                {result.status}
               </span>
             </dd>
           </div>
@@ -70,7 +72,11 @@ export function CheckoutView({ result }: { result: CheckoutResult | null }) {
             <dt>Date</dt>
             <dd>
               {result.createdAt
-                ? new Date(result.createdAt).toLocaleDateString()
+                ? new Date(result.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                 : "—"}
             </dd>
           </div>

@@ -16,6 +16,7 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
+import { useVendorPlan } from "@/lib/use-vendor-plan"
 import {
   Sidebar,
   SidebarContent,
@@ -95,6 +96,7 @@ export function DashboardSidebar() {
   const { data: session } = useSession()
   const pathname = usePathname()
   const role = session?.user?.role || pathname.split("/")[2] || "customer"
+  const plan = useVendorPlan(role === "vendor", session?.user?.subscriptionPlan)
   const title =
     role === "admin"
       ? "Admin Workspace"
@@ -108,7 +110,7 @@ export function DashboardSidebar() {
       : undefined) ||
     session?.user?.name ||
     "WedPlan member"
-  const isPremium = session?.user?.subscriptionPlan === "Premium"
+  const isPremium = plan === "Premium"
 
   return (
     <Sidebar collapsible="none" className="dashboard-sidebar-card">
@@ -123,6 +125,7 @@ export function DashboardSidebar() {
             <span
               className={`dashboard-plan-badge ${isPremium ? "premium" : ""}`}
             >
+              {isPremium && <Crown size={12} />}
               {isPremium ? "Premium" : "Free"}
             </span>
           )}

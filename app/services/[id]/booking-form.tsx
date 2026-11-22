@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { getApiToken } from "@/lib/api-token"
-import { Check, CircleCheck, MapPin } from "lucide-react"
+import { CalendarDays, CircleCheck, MapPin } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
 import { toast } from "@/components/ui/toast"
 import { BookingFormSkeleton } from "@/components/dashboard/loading-skeletons"
@@ -60,8 +60,10 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
 
   return (
     <aside className="booking-panel">
-      <h2>Request a booking</h2>
-      <p>Share a few details with this vendor to start the conversation.</p>
+      <h2>Request a Booking</h2>
+      <p>
+        Reserve this vendor for your wedding date and share celebration details.
+      </p>
       {submitted ? (
         <div className="booking-success">
           <CircleCheck size={36} />
@@ -97,17 +99,20 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
       ) : (
         <form className="booking-form" onSubmit={submit}>
           <label>
-            Event date
-            <input
-              required
-              type="date"
-              value={eventDate}
-              onChange={(event) => setEventDate(event.target.value)}
-              min={new Date().toISOString().slice(0, 10)}
-            />
+            Event Date
+            <span className="input-with-icon">
+              <CalendarDays size={16} />
+              <input
+                required
+                type="date"
+                value={eventDate}
+                onChange={(event) => setEventDate(event.target.value)}
+                min={new Date().toISOString().slice(0, 10)}
+              />
+            </span>
           </label>
           <label>
-            Event location / venue
+            Event Location / Venue
             <span className="input-with-icon">
               <MapPin size={16} />
               <input
@@ -120,7 +125,7 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
             </span>
           </label>
           <label>
-            Additional message <small>(optional)</small>
+            Additional Message <small>(Optional)</small>
             <textarea
               maxLength={1000}
               rows={4}
@@ -138,13 +143,7 @@ export function BookingForm({ serviceId }: { serviceId: string }) {
             disabled={submitting}
             className="button button-primary booking-submit"
           >
-            {submitting ? (
-              "Sending request…"
-            ) : (
-              <>
-                <Check size={16} /> Send booking request
-              </>
-            )}
+            {submitting ? "Sending request…" : "Send Booking Request"}
           </button>
         </form>
       )}

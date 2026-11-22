@@ -126,7 +126,7 @@ export default function VendorSubscriptionPage() {
             <h2>{currentPlan} Plan</h2>
             <span className="service-count-badge">
               {currentPlan === "Premium"
-                ? `${overview?.activeServices ?? 0} Active Services`
+                ? "Unlimited Services"
                 : `${overview?.activeServices ?? 0} / 3 Active Services`}
             </span>
           </div>
@@ -176,7 +176,9 @@ export default function VendorSubscriptionPage() {
             <h2>
               <Crown size={19} /> Premium Plan
             </h2>
-            <span className="recommended-badge">Recommended</span>
+            <span className="recommended-badge">
+              {currentPlan === "Premium" ? "Active Plan" : "Recommended"}
+            </span>
           </div>
           <p>Built for established wedding studios scaling bookings.</p>
           <p className="plan-price">
