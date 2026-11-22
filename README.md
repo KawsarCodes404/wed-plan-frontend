@@ -22,10 +22,15 @@ WedPlan is a responsive wedding-services marketplace where couples discover veri
 - Stripe Checkout, ImgBB uploads through the backend, and Framer Motion
 - Vercel deployment
 
-## Project Links
+## Live Websites
 
-- **Live website:** [wedplan-marketplace.vercel.app](https://wedplan-marketplace.vercel.app)
-- **Live API:** [wedplan-api-cyan.vercel.app](https://wedplan-api-cyan.vercel.app)
+| App | Live URL |
+| --- | --- |
+| Client website | [wedplan-marketplace.vercel.app](https://wedplan-marketplace.vercel.app) |
+| Server API | [wedplan-api-cyan.vercel.app](https://wedplan-api-cyan.vercel.app) |
+
+## Repositories
+
 - **Client repository:** [wedplan-marketplace](https://github.com/KawsarCodes404/wedplan-marketplace)
 - **Server repository:** [wedplan-api](https://github.com/KawsarCodes404/wedplan-api)
 
