@@ -4,7 +4,13 @@ import { MongoClient } from "mongodb"
 import { mongodbAdapter } from "@better-auth/mongo-adapter"
 import { getOAuthState } from "better-auth/api"
 
-const client = new MongoClient(process.env.BETTER_AUTH_DB_URI as string)
+// MongoClient validates its URI during module evaluation. Next.js imports this
+// module while collecting route data, when deployment-only env vars may not be
+// available yet. Keep the client constructible during the build; deployments
+// must still provide BETTER_AUTH_DB_URI for database-backed auth requests.
+const client = new MongoClient(
+  process.env.BETTER_AUTH_DB_URI ?? "mongodb://127.0.0.1:27017"
+)
 export const db = client.db("wed-plan")
 
 export const auth = betterAuth({
