@@ -1,38 +1,68 @@
-# WedPlan — Wedding Planning Platform
+# WedPlan — Wedding Services Marketplace
 
-WedPlan is a marketplace where couples can find wedding vendors and request bookings. Vendors manage services and booking requests, and admins review marketplace activity.
-
-## Links
-
-- Live site: [https://wedplan-marketplace.vercel.app](https://wedplan-marketplace.vercel.app)
-- API: [https://wedplan-api-cyan.vercel.app](https://wedplan-api-cyan.vercel.app)
-- Frontend repository: [wed-plan-frontend](https://github.com/KawsarCodes404/wed-plan-frontend)
-- Backend repository: [wed-plan-backend](https://github.com/KawsarCodes404/wed-plan-backend)
+WedPlan is a responsive wedding-services marketplace where couples discover verified vendors, compare service packages, and send booking requests. Vendors manage their listings and inquiries, while admins review marketplace activity.
 
 ## Features
 
-- Search and filter approved wedding services by name, category, location, and price.
-- Customer, vendor, and admin sign in with email or Google.
-- Customer booking requests and booking status tracking.
-- Vendor service management, approval status, and booking request management.
-- Free vendor plan with up to three active services; Premium adds unlimited services and a vendor badge.
-- Stripe Checkout subscriptions, verified through backend webhooks.
-- Admin tools for users, service review, and read-only payment transactions.
-- Responsive pages, loading placeholders, form feedback, and motion that respects reduced-motion settings.
+- Browse approved wedding services and search by keyword, category, or location; sort by newest or price.
+- Customer, vendor, and admin experiences with email and Google sign-in.
+- Customer booking requests, status tracking, and booking management.
+- Vendor service creation and management, booking responses, and dashboard summaries.
+- Free vendor plan with up to three active services; Premium provides unlimited active services and a Premium vendor badge.
+- Stripe Checkout subscription flow with payment status confirmed by backend webhooks.
+- Admin tools for managing users and services, and viewing transaction records.
+- Responsive layouts, loading skeletons, accessible form feedback, and reduced-motion-aware animation.
 
-## Technology
+## Technology Stack
 
-Next.js 16, React, TypeScript, Better Auth, ShadCN components, Express, MongoDB, Stripe Checkout, ImgBB, and Framer Motion.
+- Next.js 16, React, and TypeScript
+- Tailwind CSS and ShadCN UI components
+- Better Auth with MongoDB and Google OAuth
+- Express API (see the [server repository](https://github.com/KawsarCodes404/wedplan-api))
+- Stripe Checkout, ImgBB uploads through the backend, and Framer Motion
+- Vercel deployment
 
-## Run locally
+## Project Links
 
-1. Copy `.env.example` to `.env.local` and fill in your Better Auth, MongoDB, Google OAuth, and API URL values.
-2. In the backend repository, copy its `.env.example` to `.env` and add MongoDB and Stripe settings. Follow its README for Stripe webhook setup.
-3. Install and start the API with `npm install` and `npm run dev` in `wed-plan-backend`.
-4. Install and start the website with `npm install` and `npm run dev` in `wed-plan-frontend`.
-5. Open [http://localhost:3000](http://localhost:3000).
+- **Live website:** [wedplan-marketplace.vercel.app](https://wedplan-marketplace.vercel.app)
+- **Live API:** [wedplan-api-cyan.vercel.app](https://wedplan-api-cyan.vercel.app)
+- **Client repository:** [wedplan-marketplace](https://github.com/KawsarCodes404/wedplan-marketplace)
+- **Server repository:** [wedplan-api](https://github.com/KawsarCodes404/wedplan-api)
 
-Better Auth and the API should use the same MongoDB database and `BETTER_AUTH_URL`. The API verifies short-lived Better Auth JWTs against its JWKS endpoint and reads the user’s current role and blocked status from MongoDB.
+## Installation
 
-Use placeholders in `.env.example`. Never commit `.env`, `.env.local`, or secret credentials.
-Set `IMGBB_API_KEY` in the backend `.env`; image uploads go through the API so the key is not sent to browsers.
+1. Install Node.js (LTS).
+2. Clone this repository and install dependencies:
+
+   ```bash
+   git clone https://github.com/KawsarCodes404/wedplan-marketplace.git
+   cd wedplan-marketplace
+   npm install
+   ```
+
+3. Copy `.env.example` to `.env.local` and configure the values. See the example file for the full list. The site uses Better Auth and MongoDB settings, Google OAuth credentials, and `NEXT_PUBLIC_API_BASE_URL` for the API address.
+4. Set up and run the [WedPlan API](https://github.com/KawsarCodes404/wedplan-api) as described in its README. Both apps must use the same Better Auth URL and database configuration.
+
+Keep real credentials in local or deployment environment settings. Never commit `.env`, `.env.local`, OAuth secrets, or Stripe secrets.
+
+## Run Locally
+
+Start the frontend development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Start the backend separately; by default the API runs at `http://localhost:5000`.
+
+Useful scripts:
+
+- `npm run dev` — start the development server.
+- `npm run build` — create a production build.
+- `npm run start` — serve the production build.
+- `npm run lint` — run ESLint.
+- `npm run typecheck` — check TypeScript types.
+
+## Related Project
+
+The API contains the server-side role and ownership checks, booking rules, service approval, image upload handling, and Stripe webhook processing. Premium access is granted only after the verified webhook updates the vendor subscription.
