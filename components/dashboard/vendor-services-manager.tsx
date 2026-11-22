@@ -355,7 +355,7 @@ export function VendorServiceForm({ service }: { service?: Service }) {
       </div>
       <div className="vendor-upload">
         <label className="vendor-upload-label" htmlFor="service-images">
-          Service Images <small>(Up to 6 files, uploaded to ImgBB)</small>
+          Service Images <small>({images.length}/6 selected)</small>
         </label>
         <div className="vendor-upload-dropzone">
           <input
@@ -371,10 +371,11 @@ export function VendorServiceForm({ service }: { service?: Service }) {
             className="button button-outline vendor-upload-button"
             htmlFor="service-images"
           >
-            <ImagePlus size={15} /> Select Image Files
+            <ImagePlus size={15} /> Add photos
           </label>
           <p>
-            PNG, JPG, or WebP up to 5 MB each. First image is used as the cover.
+            Choose up to 6 PNG, JPG, or WebP photos, up to 5 MB each. The first
+            photo is used as the cover.
           </p>
           {uploading && (
             <span className="vendor-upload-progress">Uploading images…</span>

@@ -1909,14 +1909,15 @@ body {
   right: 14px;
 }
 .detail-thumbnails {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 9px;
-  padding: 10px;
+  overflow-x: auto;
+  padding: 10px 12px;
 }
 .detail-thumbnails > button {
-  width: 100%;
-  height: 95px;
+  flex: 0 0 96px;
+  width: 96px;
+  height: 64px;
   border: 2px solid transparent;
   border-radius: 8px;
   background-color: #f7f2ef;
@@ -2842,19 +2843,84 @@ body {
   outline: none;
 }
 .customer-booking-extra {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 13px;
+  margin-top: 3px;
+  border: 1px solid #eee8e3;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fdfbf9, #fffefd);
+  padding: 15px;
+}
+.customer-booking-extra-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 5px;
-  border-top: 1px solid #eee8e3;
-  padding-top: 9px;
 }
-.customer-booking-extra p {
+.customer-booking-extra-heading h4 {
+  margin: 4px 0 0;
+  color: #332b29;
+  font: 600 17px Georgia, serif;
+}
+.customer-booking-reference {
+  border: 1px solid #eee8e3;
+  border-radius: 99px;
+  background: #fffefd;
+  padding: 6px 9px;
+  color: #79716e;
+  font-size: 10px;
+}
+.customer-booking-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 9px;
+}
+.customer-booking-detail-grid > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  border: 1px solid #eee8e3;
+  border-radius: 8px;
+  background: #fffefd;
+  padding: 11px;
+}
+.customer-booking-detail-grid span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #79716e;
+  font-size: 10px;
+}
+.customer-booking-detail-grid svg {
+  color: #8e263b;
+}
+.customer-booking-detail-grid strong {
+  overflow-wrap: anywhere;
+  color: #443b38;
+  font-size: 12px;
+  font-weight: 600;
+}
+.customer-booking-message {
+  border: 1px solid #eee8e3;
+  border-radius: 8px;
+  background: #fffefd;
+  padding: 12px;
+}
+.customer-booking-message strong {
+  color: #443b38;
+  font-size: 11px;
+}
+.customer-booking-message p {
   margin: 0;
+  padding-top: 5px;
   color: #625a56;
   font-size: 11px;
   line-height: 1.5;
+}
+.customer-booking-extra-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 .customer-booking-extra .button {
   min-height: 33px;
@@ -3176,8 +3242,7 @@ body {
     justify-self: start;
   }
   .customer-booking-extra {
-    align-items: flex-start;
-    flex-direction: column;
+    padding: 12px;
   }
   .dashboard-panel-heading h2,
   .dashboard-plan-card h2 {
@@ -4269,11 +4334,104 @@ body {
 }
 .admin-user-details-row td {
   background: #fcfaf8;
-  color: #79716e;
-  font-size: 11px;
+  padding: 14px 16px;
+  white-space: normal;
 }
-.admin-user-details-row td > * + * {
-  margin-left: 18px;
+.admin-user-details-card {
+  display: grid;
+  gap: 13px;
+  border: 1px solid #eee8e3;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fffefd, #fcf8f5);
+  padding: 15px;
+}
+.admin-user-details-heading,
+.admin-user-details-person,
+.admin-user-details-badges {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-user-details-person {
+  justify-content: flex-start;
+}
+.admin-user-details-person > img,
+.admin-user-details-person > .admin-user-initials {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+}
+.admin-user-details-person > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+.admin-user-details-person small,
+.admin-user-details-grid > div > span,
+.admin-user-details-bio > span,
+.admin-user-account-id > span {
+  color: #827a76;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.admin-user-details-person strong {
+  color: #342d2b;
+  font: 600 16px Georgia, serif;
+}
+.admin-user-details-person > span:last-child > span {
+  color: #79716e;
+  font-size: 10px;
+}
+.admin-user-details-badges {
+  justify-content: flex-end;
+}
+.admin-user-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 9px;
+}
+.admin-user-details-grid > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  border: 1px solid #eee8e3;
+  border-radius: 8px;
+  background: #fffefd;
+  padding: 10px 11px;
+}
+.admin-user-details-grid > div > strong {
+  overflow-wrap: anywhere;
+  color: #443b38;
+  font-size: 11px;
+  font-weight: 600;
+}
+.admin-user-details-bio {
+  border: 1px solid #eee8e3;
+  border-radius: 8px;
+  background: #fffefd;
+  padding: 11px;
+}
+.admin-user-details-bio p {
+  margin: 5px 0 0;
+  color: #625a56;
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: normal;
+}
+.admin-user-account-id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  border-top: 1px solid #eee8e3;
+  padding-top: 10px;
+}
+.admin-user-account-id code {
+  overflow-wrap: anywhere;
+  color: #79716e;
+  font-size: 10px;
 }
 .admin-users-empty {
   padding: 24px 14px !important;

@@ -73,7 +73,11 @@ type User = {
   role: string
   isBlocked: boolean
   businessName?: string
+  location?: string | null
+  bio?: string | null
+  createdAt?: string
   subscriptionPlan?: string
+  subscriptionExpiresAt?: string | null
   image?: string | null
 }
 type Transaction = {
@@ -85,6 +89,17 @@ type Transaction = {
   status: string
   createdAt: string
   vendor?: { name?: string; email?: string; businessName?: string }
+}
+
+function formatUserDate(value?: string | null) {
+  if (!value) return "Date unavailable"
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return "Date unavailable"
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 export function AdminManager({
@@ -503,11 +518,94 @@ export function AdminManager({
                   {viewingUser === row._id && (
                     <tr className="admin-user-details-row">
                       <td colSpan={5}>
-                        <strong>Account details</strong>
-                        <span>
-                          {row.businessName || "No business name on file"}
-                        </span>
-                        <span>Account ID: {row._id}</span>
+                        <div className="admin-user-details-card">
+                          <div className="admin-user-details-heading">
+                            <div className="admin-user-details-person">
+                              {row.image ? (
+                                <img src={row.image} alt="" />
+                              ) : (
+                                <span className="admin-user-initials">
+                                  {(row.name || "W")
+                                    .split(/\s+/)
+                                    .map((part) => part[0])
+                                    .slice(0, 2)
+                                    .join("")
+                                    .toUpperCase()}
+                                </span>
+                              )}
+                              <span>
+                                <small>ACCOUNT DETAILS</small>
+                                <strong>{row.name || "WedPlan member"}</strong>
+                                <span>{row.email}</span>
+                              </span>
+                            </div>
+                            <div className="admin-user-details-badges">
+                              <span className="admin-user-role">
+                                {row.role.charAt(0).toUpperCase() +
+                                  row.role.slice(1)}
+                              </span>
+                              <span
+                                className={`admin-user-status ${row.isBlocked ? "blocked" : "active"}`}
+                              >
+                                {row.isBlocked ? "Blocked" : "Active"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="admin-user-details-grid">
+                            {row.businessName && (
+                              <div>
+                                <span>Business name</span>
+                                <strong>{row.businessName}</strong>
+                              </div>
+                            )}
+                            {row.location && (
+                              <div>
+                                <span>Location</span>
+                                <strong>{row.location}</strong>
+                              </div>
+                            )}
+                            <div>
+                              <span>Account type</span>
+                              <strong>
+                                {row.role.charAt(0).toUpperCase() +
+                                  row.role.slice(1)}
+                              </strong>
+                            </div>
+                            <div>
+                              <span>Vendor plan</span>
+                              <strong>
+                                {row.role === "vendor"
+                                  ? row.subscriptionPlan || "Free"
+                                  : "Not applicable"}
+                              </strong>
+                            </div>
+                            <div>
+                              <span>Member since</span>
+                              <strong>{formatUserDate(row.createdAt)}</strong>
+                            </div>
+                            {row.subscriptionPlan === "Premium" &&
+                              row.subscriptionExpiresAt && (
+                                <div>
+                                  <span>Premium through</span>
+                                  <strong>
+                                    {formatUserDate(
+                                      row.subscriptionExpiresAt
+                                    )}
+                                  </strong>
+                                </div>
+                              )}
+                          </div>
+                          {row.bio && (
+                            <div className="admin-user-details-bio">
+                              <span>About</span>
+                              <p>{row.bio}</p>
+                            </div>
+                          )}
+                          <div className="admin-user-account-id">
+                            <span>Account ID</span>
+                            <code>{row._id}</code>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   )}

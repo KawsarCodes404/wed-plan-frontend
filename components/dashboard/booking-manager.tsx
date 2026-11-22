@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import {
   CalendarDays,
   Check,
+  Clock3,
   Eye,
   Mail,
   MapPin,
@@ -180,37 +181,90 @@ export function BookingManager({ role }: { role: "customer" | "vendor" }) {
                       <span>Requested: {formatBookingDate(row.createdAt)}</span>
                     )}
                   </div>
-                  {expandedBooking === row._id && (
-                    <div className="customer-booking-extra">
-                      {row.message ? (
-                        <p>{row.message}</p>
-                      ) : (
-                        <p>No additional message was added to this request.</p>
-                      )}
-                      {row.status === "Pending" && (
-                        <button
-                          disabled={busy === row._id}
-                          className="button button-outline"
-                          onClick={() => void update(row, "Cancelled")}
-                        >
-                          Cancel request
-                        </button>
-                      )}
-                    </div>
-                  )}
                 </div>
                 <button
                   type="button"
                   className="customer-booking-details-button"
                   aria-expanded={expandedBooking === row._id}
+                  aria-controls={`booking-details-${row._id}`}
                   onClick={() =>
                     setExpandedBooking((current) =>
                       current === row._id ? "" : row._id
                     )
                   }
                 >
-                  <Eye size={14} /> Details
+                  <Eye size={14} />
+                  {expandedBooking === row._id ? "Hide details" : "Details"}
                 </button>
+                {expandedBooking === row._id && (
+                  <section
+                    id={`booking-details-${row._id}`}
+                    className="customer-booking-extra"
+                    aria-label="Booking details"
+                  >
+                    <div className="customer-booking-extra-heading">
+                      <div>
+                        <span className="eyebrow">REQUEST SUMMARY</span>
+                        <h4>Booking details</h4>
+                      </div>
+                      <span className="customer-booking-reference">
+                        Request #{row._id.slice(-6).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="customer-booking-detail-grid">
+                      <div>
+                        <span>
+                          <CalendarDays size={14} /> Event date
+                        </span>
+                        <strong>{formatBookingDate(row.eventDate)}</strong>
+                      </div>
+                      <div>
+                        <span>
+                          <MapPin size={14} /> Event location
+                        </span>
+                        <strong>{row.eventLocation}</strong>
+                      </div>
+                      <div>
+                        <span>
+                          <UserRound size={14} /> Vendor
+                        </span>
+                        <strong>
+                          {row.vendor?.businessName ||
+                            row.vendor?.name ||
+                            "Wedding vendor"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>
+                          <Clock3 size={14} /> Requested on
+                        </span>
+                        <strong>
+                          {row.createdAt
+                            ? formatBookingDate(row.createdAt)
+                            : "Date unavailable"}
+                        </strong>
+                      </div>
+                    </div>
+                    <div className="customer-booking-message">
+                      <strong>Your message</strong>
+                      <p>
+                        {row.message ||
+                          "No additional message was added to this request."}
+                      </p>
+                    </div>
+                    {row.status === "Pending" && (
+                      <div className="customer-booking-extra-actions">
+                        <button
+                          disabled={busy === row._id}
+                          className="button button-outline"
+                          onClick={() => void update(row, "Cancelled")}
+                        >
+                          {busy === row._id ? "Cancelling…" : "Cancel request"}
+                        </button>
+                      </div>
+                    )}
+                  </section>
+                )}
               </article>
             ) : (
               <article className="request-card" key={row._id}>
