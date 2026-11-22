@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth"
 import { jwt } from "better-auth/plugins"
 import { MongoClient } from "mongodb"
 import { mongodbAdapter } from "@better-auth/mongo-adapter"
-import { getOAuthState } from "better-auth/api"
+import { APIError, createAuthMiddleware, getOAuthState } from "better-auth/api"
+import { isValidSignupPassword } from "@/lib/password"
 
 const MONGODB_HOSTS =
   "ac-tfbmyvt-shard-00-00.drmhua0.mongodb.net:27017,ac-tfbmyvt-shard-00-01.drmhua0.mongodb.net:27017,ac-tfbmyvt-shard-00-02.drmhua0.mongodb.net:27017"
@@ -37,6 +38,23 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
+    maxPasswordLength: 128,
+  },
+  hooks: {
+    before: createAuthMiddleware(async (context) => {
+      if (context.path !== "/sign-up/email") return
+
+      const password = context.body?.password
+      if (
+        typeof password !== "string" ||
+        !isValidSignupPassword(password)
+      ) {
+        throw new APIError("BAD_REQUEST", {
+          message:
+            "Password must be 6–128 characters and include an uppercase and a lowercase letter.",
+        })
+      }
+    }),
   },
   user: {
     additionalFields: {

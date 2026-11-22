@@ -12,7 +12,7 @@ export const getSession = async () => {
 export const getToken = async () => {
   const result = await getAuthToken(await headers())
   if (!result?.token) {
-    redirect("/unauthorized")
+    redirect("/sign-in")
   }
   return result.token
 }
@@ -56,7 +56,10 @@ export const protectedMutation = async (
 
 export const requireRole = async (role: "admin" | "customer" | "vendor") => {
   const session = await getSession()
-  if (!session || session.user.role !== role || session.user.isBlocked) {
+  if (!session) {
+    redirect("/sign-in")
+  }
+  if (session.user.isBlocked || session.user.role !== role) {
     redirect("/unauthorized")
   }
   return session

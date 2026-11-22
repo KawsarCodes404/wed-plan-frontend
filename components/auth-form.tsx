@@ -14,6 +14,7 @@ import { PillRadioGroup } from "@/components/ui/pill-radio-group"
 import { authClient } from "@/lib/auth-client"
 import { uploadProfileImage } from "@/lib/image-upload"
 import { addWelcomeQuery, dashboardPath } from "@/lib/auth-redirect"
+import { isValidSignupPassword } from "@/lib/password"
 
 export type AuthMode = "sign-in" | "sign-up"
 
@@ -25,8 +26,6 @@ const COPY = {
     submit: "Sign In",
     switchText: "Don't have an account?",
     switchLink: { href: "/sign-up", label: "Sign Up" },
-    extraHref: "/forgot-password",
-    extraLabel: "Forgot password?",
   },
   "sign-up": {
     title: "Create Your WedPlan Account",
@@ -35,8 +34,6 @@ const COPY = {
     submit: "Create Account",
     switchText: "Already have an account?",
     switchLink: { href: "/sign-in", label: "Sign In" },
-    extraHref: "/sign-up",
-    extraLabel: null as string | null,
   },
 } satisfies Record<
   AuthMode,
@@ -46,8 +43,6 @@ const COPY = {
     submit: string
     switchText: string
     switchLink: { href: string; label: string }
-    extraHref: string
-    extraLabel: string | null
   }
 >
 
@@ -136,6 +131,13 @@ export function AuthForm({
     const formData = new FormData(event.currentTarget)
     const email = String(formData.get("email") ?? "").trim()
     const password = String(formData.get("password") ?? "")
+
+    if (isSignUp && !isValidSignupPassword(password)) {
+      setSubmitError(
+        "Password must be 6–128 characters and include an uppercase and a lowercase letter."
+      )
+      return
+    }
 
     if (isSignUp && imagePreview && !profileImageUrl) {
       setSubmitError(
@@ -354,12 +356,7 @@ export function AuthForm({
                 letter.
               </span>
             ) : (
-              <Link
-                href={copy.extraHref}
-                className="text-sm text-[#958eff] transition-colors outline-none hover:text-[#b1a8ff] focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                {copy.extraLabel}
-              </Link>
+              null
             )
           }
         >
@@ -370,7 +367,10 @@ export function AuthForm({
               type={showPassword ? "text" : "password"}
               required
               minLength={isSignUp ? 6 : undefined}
-              pattern={isSignUp ? "(?=.*[a-z])(?=.*[A-Z]).{6,}" : undefined}
+              maxLength={isSignUp ? 128 : undefined}
+              pattern={
+                isSignUp ? "(?=.*[a-z])(?=.*[A-Z]).{6,128}" : undefined
+              }
               autoComplete={isSignUp ? "new-password" : "current-password"}
               placeholder={
                 isSignUp
