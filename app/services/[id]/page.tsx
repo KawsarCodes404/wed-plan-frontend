@@ -30,6 +30,11 @@ type Service = {
   }
 }
 
+export const metadata: Metadata = {
+  title: "Wedding Service Details | WedPlan",
+  description: "View wedding service details and send a booking request.",
+}
+
 async function getService(id: string): Promise<Service | null> {
   const response = await fetch(
     `${apiBase}/services/${encodeURIComponent(id)}`,
@@ -45,37 +50,6 @@ async function getService(id: string): Promise<Service | null> {
     return (await response.json()) as Service
   } catch {
     throw new Error("We couldn’t read this service right now. Please try again.")
-  }
-}
-
-async function getServiceForMetadata(id: string): Promise<Service | null> {
-  try {
-    return await getService(id)
-  } catch {
-    return null
-  }
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}): Promise<Metadata> {
-  const { id } = await params
-  const service = await getServiceForMetadata(id)
-  if (!service) return { title: "Service not found | WedPlan" }
-  return {
-    title: `${service.serviceName} | WedPlan`,
-    description:
-      `${service.category} in ${service.location}. ${service.description}`.slice(
-        0,
-        160
-      ),
-    openGraph: {
-      title: `${service.serviceName} | WedPlan`,
-      description: `${service.category} in ${service.location}`,
-      images: service.images?.[0] ? [service.images[0]] : undefined,
-    },
   }
 }
 

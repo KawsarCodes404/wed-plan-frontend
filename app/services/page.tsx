@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { RevealGrid } from "@/components/reveal-grid"
 import { FilterDropdown } from "@/components/ui/filter-dropdown"
+import { useSession } from "@/lib/auth-client"
 
 const categories = [
   "Photography & Videography",
@@ -46,7 +47,19 @@ type Result = {
   page: number
 }
 
-function ServiceTile({ service }: { service: Service }) {
+function ServiceTile({
+  service,
+  signedIn,
+}: {
+  service: Service
+  signedIn: boolean | null
+}) {
+  const detailPath = `/services/${service._id}`
+  const detailsHref =
+    signedIn === false
+      ? `/sign-in?callbackURL=${encodeURIComponent(detailPath)}`
+      : detailPath
+
   return (
     <article className="service-card">
       <div
@@ -102,7 +115,7 @@ function ServiceTile({ service }: { service: Service }) {
         </div>
         <Link
           className="button button-primary card-link"
-          href={`/services/${service._id}`}
+          href={detailsHref}
         >
           View Details <span aria-hidden>→</span>
         </Link>
@@ -112,6 +125,8 @@ function ServiceTile({ service }: { service: Service }) {
 }
 
 export default function ServicesPage() {
+  const { data: session, isPending: sessionPending } = useSession()
+  const signedIn = sessionPending ? null : Boolean(session?.user)
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("")
   const [location, setLocation] = useState("")
@@ -128,6 +143,7 @@ export default function ServicesPage() {
   const [pageCount, setPageCount] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [filtersReady, setFiltersReady] = useState(false)
 
   const loadServices = useCallback(async () => {
     setLoading(true)
@@ -173,10 +189,12 @@ export default function ServicesPage() {
       sort: params.get("sort") || "newest",
       page: 1,
     })
+    setFiltersReady(true)
   }, [])
   useEffect(() => {
+    if (!filtersReady) return
     void loadServices()
-  }, [loadServices])
+  }, [filtersReady, loadServices])
 
   const hasSearchFilters = Boolean(
     filters.search.trim() || filters.category || filters.location.trim()
@@ -279,7 +297,11 @@ export default function ServicesPage() {
             <>
               <RevealGrid className="service-grid">
                 {services.map((service) => (
-                  <ServiceTile key={service._id} service={service} />
+                  <ServiceTile
+                    key={service._id}
+                    service={service}
+                    signedIn={signedIn}
+                  />
                 ))}
               </RevealGrid>
               {pageCount > 1 && (
